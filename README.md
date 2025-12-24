@@ -45,14 +45,14 @@ Official UnelmaPay payment gateway plugin for WordPress and WooCommerce. Accept 
 1. **Clone the repository:**
    ```bash
    cd /path/to/wordpress/wp-content/plugins/
-   git clone https://github.com/unelmacoin/unelmapay-woocommerce.git unelmapay-wordpress-woocommerce
+   git clone https://github.com/unelmacoin/unelmapay-wordpress-woocommerce.git
    ```
 
 2. **Or download as ZIP:**
    ```bash
-   wget https://github.com/unelmacoin/unelmapay-woocommerce/archive/refs/heads/main.zip
+   wget https://github.com/unelmacoin/unelmapay-wordpress-woocommerce/archive/refs/heads/main.zip
    unzip main.zip
-   mv unelmapay-woocommerce-main unelmapay-wordpress-woocommerce
+   mv unelmapay-wordpress-woocommerce-main unelmapay-wordpress-woocommerce
    ```
 
 3. **Activate the plugin:**
@@ -63,7 +63,7 @@ Official UnelmaPay payment gateway plugin for WordPress and WooCommerce. Accept 
 ### Method 2: Install via WordPress Admin
 
 1. **Download the latest release:**
-   - Go to [Releases](https://github.com/unelmacoin/unelmapay-woocommerce/releases)
+   - Go to [Releases](https://github.com/unelmacoin/unelmapay-wordpress-woocommerce/releases)
    - Download the latest `.zip` file
 
 2. **Upload to WordPress:**
@@ -348,7 +348,7 @@ All payments are processed in **NPR (Nepalese Rupee)**, which is the base curren
 - **Email**: support@unelmapay.com
 - **Website**: https://unelmapay.com.np
 - **Documentation**: https://docs.unelmapay.com/
-- **GitHub Issues**: https://github.com/unelmacoin/unelmapay-woocommerce/issues
+- **GitHub Issues**: https://github.com/unelmacoin/unelmapay-wordpress-woocommerce/issues
 
 ## 📝 Changelog
 
