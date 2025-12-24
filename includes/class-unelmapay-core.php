@@ -146,9 +146,10 @@ class UnelmaPay_Core {
     public function sandbox_mode_field() {
         $options = get_option('unelmapay_settings');
         $checked = isset($options['sandbox_mode']) && $options['sandbox_mode'] === 'yes' ? 'checked' : '';
+        echo '<input type="hidden" name="unelmapay_settings[sandbox_mode]" value="no" />';
         echo '<label><input type="checkbox" name="unelmapay_settings[sandbox_mode]" value="yes" ' . $checked . ' /> ';
         echo __('Enable Sandbox Mode (dev.unelmapay.com)', 'unelmapay-woocommerce') . '</label>';
-        echo '<p class="description">' . __('Use sandbox environment for testing. Uncheck for production.', 'unelmapay-woocommerce') . '</p>';
+        echo '<p class="description">' . __('Use sandbox environment for testing. Uncheck for production (unelmapay.com.np).', 'unelmapay-woocommerce') . '</p>';
     }
     
     public function merchant_name_field() {
@@ -189,6 +190,7 @@ class UnelmaPay_Core {
     public function debug_mode_field() {
         $options = get_option('unelmapay_settings');
         $checked = isset($options['debug_mode']) && $options['debug_mode'] === 'yes' ? 'checked' : '';
+        echo '<input type="hidden" name="unelmapay_settings[debug_mode]" value="no" />';
         echo '<label><input type="checkbox" name="unelmapay_settings[debug_mode]" value="yes" ' . $checked . ' /> ';
         echo __('Enable Debug Logging', 'unelmapay-woocommerce') . '</label>';
         echo '<p class="description">' . __('Log UnelmaPay events for troubleshooting', 'unelmapay-woocommerce') . '</p>';
