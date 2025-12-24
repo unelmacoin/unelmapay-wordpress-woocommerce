@@ -1,6 +1,6 @@
-=== UnelmaPay Payment Gateway for WooCommerce ===
+=== UnelmaPay Payment Gateway ===
 Contributors: unelmapay
-Tags: woocommerce, payment gateway, unelmapay, nepal, payment, ecommerce
+Tags: woocommerce, payment gateway, unelmapay, nepal, payment, ecommerce, donations, shortcode
 Requires at least: 5.2
 Tested up to: 6.4
 Requires PHP: 7.2
@@ -8,31 +8,47 @@ Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Accept payments via UnelmaPay payment gateway in WooCommerce. Supports sandbox and production environments.
+Accept payments via UnelmaPay. Works standalone with shortcodes or integrates with WooCommerce. Supports sandbox and production.
 
 == Description ==
 
-UnelmaPay Payment Gateway for WooCommerce allows you to accept payments directly on your WooCommerce store via UnelmaPay payment gateway.
+UnelmaPay Payment Gateway allows you to accept payments on your WordPress site. Works in two modes:
+
+**Standalone Mode** - Use shortcodes for payments, donations, memberships (no WooCommerce required)
+**WooCommerce Mode** - Full checkout integration when WooCommerce is active
+
+Perfect for both e-commerce stores and non-commerce sites accepting payments.
 
 = Features =
 
-* Simple and easy to setup
-* Full WooCommerce integration
+* **Dual Mode Operation** - Works with or without WooCommerce
+* **Shortcode Support** - `[unelmapay_button]` for payments anywhere
+* **WooCommerce Integration** - Full checkout integration when active
 * Sandbox mode for testing (dev.unelmapay.com)
 * Production mode (unelmapay.com.np)
 * IPN (Instant Payment Notification) callback support
 * Secure hash verification
 * Debug logging for troubleshooting
-* Automatic order status updates
+* Automatic payment tracking
 * Support for multiple currencies
+
+= Use Cases =
+
+* E-commerce stores (with WooCommerce)
+* Donation pages
+* Membership sites
+* Service bookings
+* Event registrations
+* Subscription payments
+* Any payment collection
 
 = Requirements =
 
 * WordPress 5.2 or higher
-* WooCommerce 4.0 or higher
 * PHP 7.2 or higher
 * SSL certificate (HTTPS) for production
 * UnelmaPay merchant account
+* WooCommerce 4.0+ (optional, for e-commerce mode)
 
 = About UnelmaPay =
 
@@ -63,20 +79,42 @@ For support and documentation, please visit:
 
 = Configuration =
 
-1. Go to WooCommerce > Settings > Payments
-2. Click on "UnelmaPay" to configure
-3. Enable the payment gateway
-4. Enter your Merchant ID (provided by UnelmaPay)
-5. Enter your Merchant Password (used for IPN verification)
-6. Enable Sandbox Mode for testing (uses dev.unelmapay.com)
-7. Enable Debug Logging to troubleshoot issues
-8. Save changes
+**With WooCommerce:**
+1. Go to WooCommerce > Settings > Payments > UnelmaPay
+2. Enable the payment gateway
+3. Enter your Merchant ID and Password
+4. Enable Sandbox Mode for testing
+5. Save changes
+
+**Without WooCommerce (Standalone):**
+1. Go to UnelmaPay > Settings in WordPress admin
+2. Enter your Merchant ID and Password
+3. Enable Sandbox Mode for testing
+4. Save changes
+5. Use shortcode: `[unelmapay_button amount="100" title="Product Name"]`
 
 == Frequently Asked Questions ==
+
+= Do I need WooCommerce? =
+
+No! The plugin works in two modes:
+- **Standalone Mode**: Use shortcodes without WooCommerce
+- **WooCommerce Mode**: Full checkout integration when WooCommerce is active
 
 = Do I need a UnelmaPay merchant account? =
 
 Yes, you need a UnelmaPay merchant account to use this plugin. Visit [UnelmaPay](https://unelmapay.com/) to sign up.
+
+= How do I use the shortcode? =
+
+Add this to any page or post:
+`[unelmapay_button amount="100" title="Product Name" description="Description" button_text="Pay Now"]`
+
+Parameters:
+- `amount` (required) - Payment amount
+- `title` (required) - Item name
+- `description` (optional) - Item description
+- `button_text` (optional) - Button label
 
 = How do I test the plugin before going live? =
 

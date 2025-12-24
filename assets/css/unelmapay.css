@@ -1,0 +1,26 @@
+.unelmapay-payment-form {
+    margin: 20px 0;
+}
+
+.unelmapay-button {
+    background-color: #0073aa;
+    color: #fff;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.unelmapay-button:hover {
+    background-color: #005177;
+}
+
+.unelmapay-button:active {
+    background-color: #003f5c;
+}
+
+.unelmapay-payment-form input[type="hidden"] {
+    display: none;
+}

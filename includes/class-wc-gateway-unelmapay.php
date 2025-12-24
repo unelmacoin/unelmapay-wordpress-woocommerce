@@ -68,6 +68,44 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
                 'default'     => '',
                 'desc_tip'    => true,
             ),
+            'merchant_name' => array(
+                'title'       => __('Merchant Name', 'unelmapay-woocommerce'),
+                'type'        => 'text',
+                'description' => __('Your business/merchant name (optional).', 'unelmapay-woocommerce'),
+                'default'     => '',
+                'desc_tip'    => true,
+            ),
+            'merchant_email' => array(
+                'title'       => __('Merchant Email', 'unelmapay-woocommerce'),
+                'type'        => 'email',
+                'description' => __('Your merchant contact email (optional).', 'unelmapay-woocommerce'),
+                'default'     => '',
+                'desc_tip'    => true,
+            ),
+            'success_url' => array(
+                'title'       => __('Success URL', 'unelmapay-woocommerce'),
+                'type'        => 'text',
+                'description' => __('Custom URL to redirect after successful payment (leave empty for default order received page).', 'unelmapay-woocommerce'),
+                'default'     => '',
+                'desc_tip'    => true,
+                'placeholder' => home_url('/payment-success/'),
+            ),
+            'fail_url' => array(
+                'title'       => __('Fail URL', 'unelmapay-woocommerce'),
+                'type'        => 'text',
+                'description' => __('Custom URL to redirect after failed payment (leave empty for default checkout page).', 'unelmapay-woocommerce'),
+                'default'     => '',
+                'desc_tip'    => true,
+                'placeholder' => home_url('/payment-failed/'),
+            ),
+            'cancel_url' => array(
+                'title'       => __('Cancel URL', 'unelmapay-woocommerce'),
+                'type'        => 'text',
+                'description' => __('Custom URL to redirect if payment is cancelled (leave empty for default cart page).', 'unelmapay-woocommerce'),
+                'default'     => '',
+                'desc_tip'    => true,
+                'placeholder' => home_url('/payment-cancelled/'),
+            ),
             'sandbox_mode' => array(
                 'title'       => __('Sandbox Mode', 'unelmapay-woocommerce'),
                 'type'        => 'checkbox',
@@ -117,8 +155,9 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             $item_name = substr($item_name, 0, 97) . '...';
         }
 
-        $return_url = $this->get_return_url($order);
-        $cancel_url = $order->get_cancel_order_url_raw();
+        $return_url = !empty($this->success_url) ? $this->success_url : $this->get_return_url($order);
+        $fail_url = !empty($this->fail_url) ? $this->fail_url : $order->get_checkout_payment_url();
+        $cancel_url = !empty($this->cancel_url) ? $this->cancel_url : $order->get_cancel_order_url_raw();
         $notify_url = WC()->api_request_url('WC_Gateway_UnelmaPay');
 
         $this->log('Payment form data for order #' . $order_id . ': merchant=' . $this->merchant_id . ', amount=' . $amount . ', notify_url=' . $notify_url);
@@ -130,9 +169,10 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $form_html .= '<input type="hidden" name="currency" value="' . esc_attr($currency) . '">';
         $form_html .= '<input type="hidden" name="custom" value="' . esc_attr($order_id) . '">';
         $form_html .= '<input type="hidden" name="return_url" value="' . esc_attr($return_url) . '">';
+        $form_html .= '<input type="hidden" name="fail_url" value="' . esc_attr($fail_url) . '">';
         $form_html .= '<input type="hidden" name="cancel_url" value="' . esc_attr($cancel_url) . '">';
         $form_html .= '<input type="hidden" name="notify_url" value="' . esc_attr($notify_url) . '">';
-        $form_html .= '<button type="submit" class="button alt" id="submit_unelmapay_payment_form">' . __('Pay Now', 'unelmapay-woocommerce') . '</button>';
+        $form_html .= '<button type="submit" class="button alt" id="submit_unelmapay_payment_form">' . __('Pay now via UnelmaPay', 'unelmapay-woocommerce') . '</button>';
         $form_html .= '<a class="button cancel" href="' . esc_url($cancel_url) . '">' . __('Cancel order &amp; restore cart', 'unelmapay-woocommerce') . '</a>';
         $form_html .= '</form>';
 

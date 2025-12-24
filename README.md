@@ -1,10 +1,12 @@
-# UnelmaPay Payment Gateway for WooCommerce
+# UnelmaPay Payment Gateway
 
-A modern, lightweight WordPress plugin that integrates UnelmaPay payment gateway with WooCommerce.
+A modern, lightweight WordPress plugin that integrates UnelmaPay payment gateway. Works standalone or with WooCommerce.
 
 ## Features
 
-- ✅ Full WooCommerce integration
+- ✅ **Dual Mode**: Works with or without WooCommerce
+- ✅ **Standalone Mode**: Use shortcodes for payments, donations, subscriptions
+- ✅ **WooCommerce Mode**: Full checkout integration when WooCommerce is active
 - ✅ Sandbox mode for testing (dev.unelmapay.com)
 - ✅ Production mode (unelmapay.com.np)
 - ✅ IPN (Instant Payment Notification) callback support
@@ -15,9 +17,9 @@ A modern, lightweight WordPress plugin that integrates UnelmaPay payment gateway
 ## Requirements
 
 - WordPress 5.2 or higher
-- WooCommerce 4.0 or higher
 - PHP 7.2 or higher
 - SSL certificate (HTTPS) for production
+- WooCommerce 4.0+ (optional, for e-commerce mode)
 
 ## Installation
 
@@ -31,14 +33,35 @@ A modern, lightweight WordPress plugin that integrates UnelmaPay payment gateway
    - Find "UnelmaPay Payment Gateway for WooCommerce"
    - Click "Activate"
 
-3. **Configure the gateway:**
-   - Go to WooCommerce → Settings → Payments
-   - Click on "UnelmaPay"
-   - Configure the following settings:
+3. **Configure the plugin:**
+   
+   **With WooCommerce:**
+   - Go to WooCommerce → Settings → Payments → UnelmaPay
+   
+   **Without WooCommerce:**
+   - Go to UnelmaPay → Settings in WordPress admin
 
 ## Configuration
 
-### Basic Settings
+### WooCommerce Mode
+
+When WooCommerce is active, configure via WooCommerce → Settings → Payments → UnelmaPay:
+
+| Setting | Description | Example |
+|---------|-------------|---------|
+| **Enable/Disable** | Enable the payment gateway | ✓ Checked |
+| **Title** | Payment method title shown to customers | UnelmaPay |
+| **Description** | Payment method description | Pay securely via UnelmaPay |
+| **Merchant ID** | Your UnelmaPay merchant ID | YOUR_MERCHANT_ID |
+| **Merchant Password** | Your merchant password (for IPN verification) | YOUR_MERCHANT_PASSWORD |
+| **Sandbox Mode** | Enable for testing on dev.unelmapay.com | ✓ Checked (for testing) |
+| **Debug Mode** | Enable logging for troubleshooting | ✓ Checked (recommended) |
+
+### Standalone Mode
+
+When WooCommerce is NOT active, configure via UnelmaPay → Settings:
+
+#### Basic Settings
 
 | Setting | Description | Example |
 |---------|-------------|---------|
