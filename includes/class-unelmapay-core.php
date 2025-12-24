@@ -268,6 +268,8 @@ class UnelmaPay_Core {
         $fail_url = !empty($this->fail_url) ? $this->fail_url : home_url('/?unelmapay_return=1&status=failed');
         $cancel_url = !empty($this->cancel_url) ? $this->cancel_url : home_url('/?unelmapay_cancel=1');
         
+        $logo_svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="32" height="32" style="vertical-align: middle; margin-right: 8px;"><circle cx="100" cy="100" r="100" fill="white"/><text x="100" y="85" font-family="Arial, sans-serif" font-size="70" font-weight="bold" fill="#7B4397" text-anchor="middle">U</text><text x="100" y="145" font-family="Arial, sans-serif" font-size="35" font-weight="bold" fill="#7B4397" text-anchor="middle">PAY</text></svg>';
+        
         ob_start();
         ?>
         <form method="POST" action="<?php echo esc_url($payment_url); ?>" class="unelmapay-payment-form">
@@ -280,7 +282,10 @@ class UnelmaPay_Core {
             <input type="hidden" name="fail_url" value="<?php echo esc_url($fail_url); ?>">
             <input type="hidden" name="cancel_url" value="<?php echo esc_url($cancel_url); ?>">
             <input type="hidden" name="notify_url" value="<?php echo esc_url(home_url('/?unelmapay_ipn=1')); ?>">
-            <button type="submit" class="unelmapay-button"><?php echo esc_html($atts['button_text']); ?></button>
+            <button type="submit" class="unelmapay-button">
+                <?php echo $logo_svg; ?>
+                <?php echo esc_html($atts['button_text']); ?>
+            </button>
         </form>
         <?php
         return ob_get_clean();

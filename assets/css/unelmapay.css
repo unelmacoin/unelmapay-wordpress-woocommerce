@@ -5,7 +5,7 @@
 .unelmapay-button {
     background: linear-gradient(135deg, #7B4397 0%, #DC2430 100%);
     color: #fff;
-    padding: 14px 32px 14px 56px;
+    padding: 14px 28px;
     font-size: 18px;
     font-weight: 600;
     border: none;
@@ -13,26 +13,17 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(123, 67, 151, 0.3);
-    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
+    gap: 8px;
     text-transform: none;
     letter-spacing: 0.3px;
+    line-height: 1.4;
 }
 
-.unelmapay-button:before {
-    content: '';
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 32px;
-    height: 32px;
-    background-image: url('../images/unelmapay-logo.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+.unelmapay-button svg {
+    flex-shrink: 0;
 }
 
 .unelmapay-button:hover {
@@ -60,29 +51,23 @@
 #submit_unelmapay_payment_form.button.alt {
     background: linear-gradient(135deg, #7B4397 0%, #DC2430 100%) !important;
     color: #fff !important;
-    padding: 14px 32px 14px 56px !important;
+    padding: 14px 28px !important;
     font-size: 18px !important;
     font-weight: 600 !important;
     border: none !important;
     border-radius: 8px !important;
     box-shadow: 0 4px 15px rgba(123, 67, 151, 0.3) !important;
-    position: relative !important;
     text-transform: none !important;
     letter-spacing: 0.3px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    line-height: 1.4 !important;
 }
 
-#submit_unelmapay_payment_form.button.alt:before {
-    content: '';
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 32px;
-    height: 32px;
-    background-image: url('../images/unelmapay-logo.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+#submit_unelmapay_payment_form.button.alt svg {
+    flex-shrink: 0;
 }
 
 #submit_unelmapay_payment_form.button.alt:hover {

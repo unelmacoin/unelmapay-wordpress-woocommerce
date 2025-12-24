@@ -172,7 +172,10 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $form_html .= '<input type="hidden" name="fail_url" value="' . esc_attr($fail_url) . '">';
         $form_html .= '<input type="hidden" name="cancel_url" value="' . esc_attr($cancel_url) . '">';
         $form_html .= '<input type="hidden" name="notify_url" value="' . esc_attr($notify_url) . '">';
-        $form_html .= '<button type="submit" class="button alt" id="submit_unelmapay_payment_form">' . __('Pay with UnelmaPay', 'unelmapay-woocommerce') . '</button>';
+        
+        $logo_svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="32" height="32" style="vertical-align: middle; margin-right: 8px;"><circle cx="100" cy="100" r="100" fill="white"/><text x="100" y="85" font-family="Arial, sans-serif" font-size="70" font-weight="bold" fill="#7B4397" text-anchor="middle">U</text><text x="100" y="145" font-family="Arial, sans-serif" font-size="35" font-weight="bold" fill="#7B4397" text-anchor="middle">PAY</text></svg>';
+        
+        $form_html .= '<button type="submit" class="button alt" id="submit_unelmapay_payment_form">' . $logo_svg . __('Pay with UnelmaPay', 'unelmapay-woocommerce') . '</button>';
         $form_html .= '<a class="button cancel" href="' . esc_url($cancel_url) . '">' . __('Cancel order &amp; restore cart', 'unelmapay-woocommerce') . '</a>';
         $form_html .= '</form>';
 
