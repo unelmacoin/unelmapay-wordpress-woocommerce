@@ -252,7 +252,7 @@ class UnelmaPay_Core {
             'amount' => '',
             'title' => '',
             'description' => '',
-            'button_text' => __('Pay now via UnelmaPay', 'unelmapay-woocommerce'),
+            'button_text' => __('Pay with UnelmaPay', 'unelmapay-woocommerce'),
         ), $atts);
         
         if (empty($atts['amount']) || empty($atts['title'])) {

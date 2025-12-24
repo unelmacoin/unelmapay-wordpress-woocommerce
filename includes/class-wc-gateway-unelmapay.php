@@ -172,7 +172,7 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $form_html .= '<input type="hidden" name="fail_url" value="' . esc_attr($fail_url) . '">';
         $form_html .= '<input type="hidden" name="cancel_url" value="' . esc_attr($cancel_url) . '">';
         $form_html .= '<input type="hidden" name="notify_url" value="' . esc_attr($notify_url) . '">';
-        $form_html .= '<button type="submit" class="button alt" id="submit_unelmapay_payment_form">' . __('Pay now via UnelmaPay', 'unelmapay-woocommerce') . '</button>';
+        $form_html .= '<button type="submit" class="button alt" id="submit_unelmapay_payment_form">' . __('Pay with UnelmaPay', 'unelmapay-woocommerce') . '</button>';
         $form_html .= '<a class="button cancel" href="' . esc_url($cancel_url) . '">' . __('Cancel order &amp; restore cart', 'unelmapay-woocommerce') . '</a>';
         $form_html .= '</form>';
 

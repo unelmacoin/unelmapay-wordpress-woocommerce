@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="100" fill="#7B4397"/>
+  <text x="100" y="85" font-family="Arial, sans-serif" font-size="70" font-weight="bold" fill="white" text-anchor="middle">U</text>
+  <text x="100" y="145" font-family="Arial, sans-serif" font-size="35" font-weight="bold" fill="white" text-anchor="middle">PAY</text>
+</svg>

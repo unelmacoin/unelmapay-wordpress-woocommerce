@@ -3,24 +3,95 @@
 }
 
 .unelmapay-button {
-    background-color: #0073aa;
+    background: linear-gradient(135deg, #7B4397 0%, #DC2430 100%);
     color: #fff;
-    padding: 12px 24px;
-    font-size: 16px;
+    padding: 14px 32px 14px 56px;
+    font-size: 18px;
+    font-weight: 600;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(123, 67, 151, 0.3);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-transform: none;
+    letter-spacing: 0.3px;
+}
+
+.unelmapay-button:before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background-image: url('../images/unelmapay-logo.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .unelmapay-button:hover {
-    background-color: #005177;
+    background: linear-gradient(135deg, #8B54A7 0%, #EC3440 100%);
+    box-shadow: 0 6px 20px rgba(123, 67, 151, 0.4);
+    transform: translateY(-2px);
 }
 
 .unelmapay-button:active {
-    background-color: #003f5c;
+    background: linear-gradient(135deg, #6B3387 0%, #CC1420 100%);
+    box-shadow: 0 2px 10px rgba(123, 67, 151, 0.3);
+    transform: translateY(0);
+}
+
+.unelmapay-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(123, 67, 151, 0.2), 0 4px 15px rgba(123, 67, 151, 0.3);
 }
 
 .unelmapay-payment-form input[type="hidden"] {
     display: none;
+}
+
+/* WooCommerce checkout button styling */
+#submit_unelmapay_payment_form.button.alt {
+    background: linear-gradient(135deg, #7B4397 0%, #DC2430 100%) !important;
+    color: #fff !important;
+    padding: 14px 32px 14px 56px !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 15px rgba(123, 67, 151, 0.3) !important;
+    position: relative !important;
+    text-transform: none !important;
+    letter-spacing: 0.3px !important;
+}
+
+#submit_unelmapay_payment_form.button.alt:before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background-image: url('../images/unelmapay-logo.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#submit_unelmapay_payment_form.button.alt:hover {
+    background: linear-gradient(135deg, #8B54A7 0%, #EC3440 100%) !important;
+    box-shadow: 0 6px 20px rgba(123, 67, 151, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+#submit_unelmapay_payment_form.button.alt:active {
+    background: linear-gradient(135deg, #6B3387 0%, #CC1420 100%) !important;
+    transform: translateY(0) !important;
 }
