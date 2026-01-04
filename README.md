@@ -6,7 +6,9 @@
 
 Official UnelmaPay payment gateway plugin for WordPress and WooCommerce. Accept payments in NPR (Nepalese Rupee) through UnelmaPay's secure payment platform.
 
-![UnelmaPay Logo](assets/images/unelmapay-logo.svg)
+<div align="center">
+  <img src="assets/images/unelmapay-logo.svg" alt="UnelmaPay Logo" width="200">
+</div>
 
 ## 🚀 Features
 
@@ -179,6 +181,221 @@ Add payment buttons anywhere using shortcodes:
    - Make a small test transaction
    - Verify order completion
    - Check IPN callback received
+
+## 🔄 Transaction Flow
+
+### Overview
+
+The UnelmaPay payment gateway handles transactions through a secure, multi-step process that ensures payment integrity and provides real-time status updates.
+
+### WooCommerce Mode Flow
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/unelmacoin/unelmapay-wordpress-woocommerce/main/.wordpress-org/woocommerce-flow-diagram.svg" alt="WooCommerce Transaction Flow" width="100%">
+</div>
+
+#### Step-by-Step WooCommerce Flow
+
+1. **🛒 Cart & Checkout**
+   ```
+   Customer → WooCommerce: Adds products to cart
+   Customer → WooCommerce: Proceeds to checkout
+   Customer → WooCommerce: Selects UnelmaPay payment method
+   Customer → WooCommerce: Clicks "Place Order"
+   ```
+
+2. **📝 Order Creation**
+   ```
+   WooCommerce → Database: Creates order (Status: Pending)
+   WooCommerce → UnelmaPay: Redirect to payment form
+   Data sent: merchant_id, amount, order_id, return_url, notify_url
+   ```
+
+3. **💳 Payment Processing**
+   ```
+   Customer → UnelmaPay: Enters payment details
+   Customer → UnelmaPay: Confirms payment
+   UnelmaPay → Payment Gateway: Processes transaction
+   ```
+
+4. **🔄 IPN Callback**
+   ```
+   UnelmaPay → Your Site: Sends IPN callback
+   Your Site → Database: Verifies hash signature
+   Your Site → WooCommerce: Updates order status
+   Status: Pending → Processing/Completed
+   ```
+
+5. **🔙 Customer Return**
+   ```
+   UnelmaPay → Customer: Redirects back to site
+   Customer → WooCommerce: Views order confirmation
+   ```
+
+---
+
+### Standalone Mode Flow
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/unelmacoin/unelmapay-wordpress-woocommerce/main/.wordpress-org/standalone-flow-diagram.svg" alt="Standalone Transaction Flow" width="100%">
+</div>
+
+#### Step-by-Step Standalone Flow
+
+1. **📄 Payment Button Display**
+   ```
+   Customer → WordPress: Views page with shortcode
+   WordPress → Customer: Shows "Pay with UnelmaPay" button
+   ```
+
+2. **🎯 Payment Initiation**
+   ```
+   Customer → WordPress: Clicks payment button
+   WordPress → Database: Creates payment record
+   WordPress → UnelmaPay: Redirect to payment form
+   Data sent: amount, title, description, payment_id
+   ```
+
+3. **💳 Payment Processing**
+   ```
+   Customer → UnelmaPay: Enters payment details
+   Customer → UnelmaPay: Completes payment
+   UnelmaPay → Payment Gateway: Processes transaction
+   ```
+
+4. **🔄 IPN Processing**
+   ```
+   UnelmaPay → Your Site: Sends IPN callback
+   Your Site → Database: Verifies hash signature
+   Your Site → Database: Updates payment record
+   Status: Pending → Completed
+   ```
+
+5. **🔙 Return Handling**
+   ```
+   UnelmaPay → Customer: Redirects back to site
+   Customer → WordPress: Views payment result
+   ```
+
+---
+
+### 📊 Technical Details
+
+#### WooCommerce Mode Data Flow
+
+**Payment Form Fields:**
+```php
+merchant: YOUR_MERCHANT_ID
+item_name: Order #12345
+amount: 2500.00
+currency: debit_base
+custom: 12345
+return_url: https://yoursite.com/thank-you/
+fail_url: https://yoursite.com/payment-failed/
+cancel_url: https://yoursite.com/payment-cancelled/
+notify_url: https://yoursite.com/wc-api/WC_Gateway_UnelmaPay
+```
+
+**IPN Callback Data:**
+```php
+total: 2500.00
+merchant_password: YOUR_MERCHANT_PASSWORD
+date: 2024-01-04 16:30:00
+id_transfer: TXN123456789
+```
+
+#### Standalone Mode Data Flow
+
+**Payment Form Fields:**
+```php
+merchant: YOUR_MERCHANT_ID
+item_name: Tour Package
+amount: 2500.00
+currency: debit_base
+custom: pay_1234567890abcdef
+return_url: https://yoursite.com/payment-success/
+fail_url: https://yoursite.com/payment-failed/
+cancel_url: https://yoursite.com/payment-cancelled/
+notify_url: https://yoursite.com/?unelmapay_ipn=1
+```
+
+**Payment Record:**
+- Unique ID: `pay_1234567890abcdef`
+- Status: Pending → Completed
+- Transaction ID: `TXN123456789`
+
+### Security & Verification
+
+#### IPN Hash Verification
+
+All IPN callbacks are verified using MD5 hash:
+
+```php
+$calculated_hash = md5($total . ':' . $merchant_password . ':' . $date . ':' . $id_transfer);
+$received_hash = $_POST['hash'];
+
+if ($calculated_hash === $received_hash) {
+    // Valid IPN - process payment
+    update_payment_status($order_id, 'completed');
+} else {
+    // Invalid IPN - log and reject
+    log_error('Invalid IPN hash received');
+}
+```
+
+#### Security Measures
+
+- ✅ **Hash Verification**: All IPNs verified before processing
+- ✅ **HTTPS Required**: Production requires SSL certificate
+- ✅ **Password Protection**: Merchant password never exposed
+- ✅ **Unique Payment IDs**: Prevent duplicate processing
+- ✅ **IPN Logging**: All callbacks logged for audit
+
+### Error Handling
+
+#### Common Scenarios
+
+1. **Hash Verification Failed**
+   - Log error with received vs calculated hash
+   - Do not update order status
+   - Notify admin via debug logs
+
+2. **IPN Not Received**
+   - Order remains in "Pending" status
+   - Manual verification required
+   - Check UnelmaPay dashboard
+
+3. **Payment Timeout**
+   - Customer redirected back after timeout
+   - Order status remains "Pending"
+   - Customer can retry payment
+
+4. **Network Issues**
+   - IPN retry mechanism by UnelmaPay
+   - Plugin handles duplicate IPNs gracefully
+   - Status updated only once per payment
+
+### Data Flow Summary
+
+| Step | WooCommerce | Standalone | Data Sent |
+|------|-------------|------------|-----------|
+| 1. Initiation | Order created | Payment record created | Order/Payment ID |
+| 2. Redirect | Payment form | Payment form | Amount, merchant, URLs |
+| 3. Payment | Customer pays | Customer pays | Payment details |
+| 4. IPN | Order status update | Payment record update | Transaction data |
+| 5. Return | Thank you page | Custom page | Payment result |
+
+### Debug Information
+
+Enable debug mode to track transaction flow:
+
+1. **Payment Form Generation**: Logs form data and URLs
+2. **IPN Reception**: Logs received callback data
+3. **Hash Verification**: Shows calculated vs received hash
+4. **Status Updates**: Records order/payment status changes
+5. **Error Events**: Captures any processing errors
+
+View logs at: **UnelmaPay → Debug Logs**
 
 ## 🔍 Payment Tracking
 
