@@ -35,6 +35,11 @@ function unelmapay_init() {
             $gateways[] = 'WC_Gateway_UnelmaPay';
             return $gateways;
         });
+
+        add_action('woocommerce_api_unelmapay_redirect', function () {
+            $gateway = new WC_Gateway_UnelmaPay();
+            $gateway->handle_redirect_endpoint();
+        });
     }
     
     UnelmaPay_Core::instance();
@@ -49,3 +54,13 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function($links) 
     array_unshift($links, $settings_link);
     return $links;
 });
+
+add_action( 'woocommerce_blocks_loaded', function() {
+    if ( class_exists( '\Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+        require_once UNELMAPAY_PLUGIN_DIR . 'includes/class-unelmapay-blocks-support.php';
+
+        add_action( 'woocommerce_blocks_payment_method_type_registration', function( $payment_method_registry ) {
+            $payment_method_registry->register( new UnelmaPay_Blocks_Support() );
+        } );
+    }
+} );

@@ -6,6 +6,8 @@ if (!defined('ABSPATH')) {
 class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
     public function __construct() {
+        error_log('=== UlemaPay Constructur Called ===');
+        
         $this->id                 = 'unelmapay';
         $this->icon               = '';
         $this->has_fields         = false;
@@ -31,6 +33,18 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_api_wc_gateway_unelmapay', array($this, 'handle_ipn'));
+        add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
+    }
+
+    public function is_available() {
+        error_log('=== UnelmaPay is_available() Called ===');
+        error_log('merchant_id: ' . $this->merchant_id);
+        error_log('merchant_password: ' . (!empty($this->merchant_password) ? 'SET' : 'EMPTY'));
+        
+        if (empty($this->merchant_id) || empty($this->merchant_password)) {
+            return false;
+        }
+        return parent::is_available();
     }
 
     public function init_form_fields() {
@@ -128,13 +142,25 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
         $this->log('Processing payment for order #' . $order_id);
 
+        $redirect_url = add_query_arg(
+            array(
+                'order_id' => $order_id,
+                'key'      => $order->get_order_key(),
+            ),
+            WC()->api_request_url('unelmapay_redirect')
+        );
+
+        $this->log('Redirect URL for order #' . $order_id . ': ' . $redirect_url);
+
         return array(
             'result'   => 'success',
-            'redirect' => $order->get_checkout_payment_url(true)
+            'redirect' => $redirect_url,
         );
     }
 
     public function receipt_page($order_id) {
+        $this->log('Receipt page called for order #' . $order_id);
+
         $order = wc_get_order($order_id);
         
         echo '<p>' . __('Thank you for your order. Please click the button below to pay with UnelmaPay.', 'unelmapay-woocommerce') . '</p>';
@@ -269,5 +295,26 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             $logger = wc_get_logger();
             $logger->info($message, array('source' => 'unelmapay'));
         }
+    }
+
+    public function handle_redirect_endpoint() {
+        $order_id = isset($_GET['order_id']) ? absint($_GET['order_id']) : 0;
+        $key      = isset($_GET['key']) ? wc_clean(wp_unslash($_GET['key'])) : '';
+
+        if (!$order_id || !$key) {
+            wp_die('Invalid request.');
+        }
+
+        $order = wc_get_order($order_id);
+
+        if (!$order || $order->get_order_key() !== $key) {
+        wp_die('Invalid order.');
+        }
+
+        $this->log('API redirect handler called for order #' . $order_id);
+
+        wc_nocache_headers();
+        echo $this->generate_payment_form($order);
+        exit;
     }
 }
