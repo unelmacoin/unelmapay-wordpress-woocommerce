@@ -30,6 +30,7 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         }
 
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
+        add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
         add_action('woocommerce_api_wc_gateway_unelmapay', array($this, 'handle_ipn'));
     }
 
@@ -207,21 +208,48 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
     }
 
     public function handle_ipn() {
-        $this->log('IPN Request received: ' . print_r($_POST, true));
+        $request_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN';
+        $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : (isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : 'not set');
+        $raw_body = file_get_contents('php://input');
 
-        if (empty($_POST)) {
-            $this->log('IPN Error: Empty POST data');
+        $this->log('IPN Request method: ' . $request_method);
+        $this->log('IPN Content-Type: ' . $content_type);
+        $this->log('IPN Raw body: ' . $raw_body);
+        $this->log('IPN $_POST: ' . print_r($_POST, true));
+
+        $post_data = $_POST;
+
+        if (empty($post_data) && !empty($raw_body)) {
+            $content_type_lower = strtolower($content_type);
+
+            if (strpos($content_type_lower, 'application/json') !== false) {
+                $decoded = json_decode($raw_body, true);
+                if (is_array($decoded)) {
+                    $post_data = $decoded;
+                    $this->log('IPN: Parsed JSON body into post_data');
+                }
+            } else {
+                parse_str($raw_body, $parsed);
+                if (!empty($parsed)) {
+                    $post_data = $parsed;
+                    $this->log('IPN: Parsed raw body as form-urlencoded into post_data');
+                }
+            }
+        }
+
+        if (empty($post_data)) {
+            $this->log('IPN Error: Empty POST data after all parse attempts. Method=' . $request_method . ', Content-Type=' . $content_type . ', Raw body length=' . strlen($raw_body));
             wp_die('UnelmaPay IPN Request Failure', 'UnelmaPay IPN', array('response' => 400));
         }
 
-        $total = isset($_POST['total']) ? sanitize_text_field($_POST['total']) : '';
-        $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
-        $id_transfer = isset($_POST['id_transfer']) ? sanitize_text_field($_POST['id_transfer']) : '';
-        $received_hash = isset($_POST['hash']) ? sanitize_text_field($_POST['hash']) : '';
-        $custom = isset($_POST['custom']) ? sanitize_text_field($_POST['custom']) : '';
-        $item_name = isset($_POST['item_name']) ? sanitize_text_field($_POST['item_name']) : '';
-        $currency = isset($_POST['currency']) ? sanitize_text_field($_POST['currency']) : '';
-        $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+        $total = isset($post_data['total']) ? sanitize_text_field($post_data['total']) : '';
+        $date = isset($post_data['date']) ? sanitize_text_field($post_data['date']) : '';
+        $id_transfer = isset($post_data['id_transfer']) ? sanitize_text_field($post_data['id_transfer']) : '';
+        $received_hash = isset($post_data['hash']) ? sanitize_text_field($post_data['hash']) : '';
+        $custom = isset($post_data['custom']) ? sanitize_text_field($post_data['custom']) : '';
+        $item_name = isset($post_data['item_name']) ? sanitize_text_field($post_data['item_name']) : '';
+        $currency = isset($post_data['currency']) ? sanitize_text_field($post_data['currency']) : '';
+        $status = isset($post_data['status']) ? sanitize_text_field($post_data['status']) : '';
 
         $hash_string = $total . ':' . $this->merchant_password . ':' . $date . ':' . $id_transfer;
         $calculated_hash = strtoupper(md5($hash_string));
