@@ -31,6 +31,10 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             $this->payment_url = 'https://unelmapay.com.np/sci/form';
         }
 
+        $this->success_url       = $this->get_option('success_url');
+        $this->fail_url          = $this->get_option('fail_url');
+        $this->cancel_url        = $this->get_option('cancel_url');
+
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_api_wc_gateway_unelmapay', array($this, 'handle_ipn'));
         add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
