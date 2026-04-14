@@ -208,15 +208,32 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
     }
 
     public function handle_ipn() {
+        $request_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN';
+
         @file_put_contents(
             WP_CONTENT_DIR . '/unelmapay-ipn-debug.log',
-            '[' . date('Y-m-d H:i:s') . '] IPN endpoint hit. Method=' . $_SERVER['REQUEST_METHOD'] . "\n",
+            '[' . date('Y-m-d H:i:s') . '] IPN endpoint hit. Method=' . $request_method .
+            ' IP=' . (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'unknown') . "\n",
             FILE_APPEND
         );
 
+        if ($request_method === 'GET') {
+            $this->log('IPN health-check ping received (GET)');
+            status_header(200);
+            header('Content-Type: application/json');
+            echo json_encode(array(
+                'status'    => 'ok',
+                'gateway'   => 'UnelmaPay',
+                'endpoint'  => 'IPN',
+                'timestamp' => gmdate('Y-m-d\TH:i:s\Z'),
+                'method'    => 'GET (health-check)',
+                'note'      => 'IPN callbacks must be POST with fields: total, date, id_transfer, hash, custom',
+            ));
+            exit;
+        }
+
         $this->log('=== IPN HANDLER ENTERED ===');
 
-        $request_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN';
         $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : (isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : 'not set');
         $raw_body = file_get_contents('php://input');
 
