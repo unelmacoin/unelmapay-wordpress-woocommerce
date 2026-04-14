@@ -208,14 +208,31 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
     }
 
     public function handle_ipn() {
+        @file_put_contents(
+            WP_CONTENT_DIR . '/unelmapay-ipn-debug.log',
+            '[' . date('Y-m-d H:i:s') . '] IPN endpoint hit. Method=' . $_SERVER['REQUEST_METHOD'] . "\n",
+            FILE_APPEND
+        );
+
+        $this->log('=== IPN HANDLER ENTERED ===');
+
         $request_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN';
         $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : (isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : 'not set');
         $raw_body = file_get_contents('php://input');
 
+        $headers = array();
+        foreach ($_SERVER as $key => $value) {
+            if (strpos($key, 'HTTP_') === 0) {
+                $headers[substr($key, 5)] = $value;
+            }
+        }
+
         $this->log('IPN Request method: ' . $request_method);
         $this->log('IPN Content-Type: ' . $content_type);
-        $this->log('IPN Raw body: ' . $raw_body);
+        $this->log('IPN Headers: ' . print_r($headers, true));
+        $this->log('IPN Raw body (' . strlen($raw_body) . ' bytes): ' . $raw_body);
         $this->log('IPN $_POST: ' . print_r($_POST, true));
+        $this->log('IPN $_GET: ' . print_r($_GET, true));
 
         $post_data = $_POST;
 
