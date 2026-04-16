@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
     public function __construct() {
-        error_log('=== UlemaPay Constructur Called ===');
+        error_log('=== UnelmaPay Constructor Called ===');
         
         $this->id                 = 'unelmapay';
         $this->icon               = '';
@@ -43,10 +43,10 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
     public function is_available() {
         error_log('=== UnelmaPay is_available() Called ===');
-        error_log('merchant_id: ' . $this->merchant_id);
-        error_log('merchant_password: ' . (!empty($this->merchant_password) ? 'SET' : 'EMPTY'));
-        error_log('sandbox_mode: ' . ($this->sandbox_mode ? 'ENABLED' : 'DISABLED'));
-        error_log('enabled: ' . ($this->get_option('enabled') === 'yes' ? 'YES' : 'NO'));
+        error_log('Merchant ID: ' . $this->merchant_id);
+        error_log('Merchant Password: ' . (!empty($this->merchant_password) ? 'SET' : 'EMPTY'));
+        error_log('Sandbox Mode: ' . ($this->sandbox_mode ? 'ENABLED' : 'DISABLED'));
+        error_log('Enabled: ' . ($this->get_option('enabled') === 'yes' ? 'YES' : 'NO'));
 
         if (empty($this->merchant_id) || empty($this->merchant_password)) {
             error_log('UnelmaPay is not available: Merchant ID or Password is missing.');
@@ -363,4 +363,10 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
         return new WP_REST_Response($response, 200);
     }
+}
+
+add_filter('woocommerce_payment_gateways', array($this, 'add_gateway_class'));
+public function add_gateway_class($methods) {
+    $methods[] = 'WC_Gateway_UnelmaPay';
+    return $methods;
 }
