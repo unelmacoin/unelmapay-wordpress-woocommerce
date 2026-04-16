@@ -58,6 +58,9 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             return false;
         }
 
+        error_log('UnelmaPay is_available() called. Merchant ID: ' . $this->merchant_id);
+        error_log('UnelmaPay is_available() called. Enabled: ' . $this->get_option('enabled'));
+
         return parent::is_available();
     }
 
