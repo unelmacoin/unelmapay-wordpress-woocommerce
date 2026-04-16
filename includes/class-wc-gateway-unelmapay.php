@@ -368,8 +368,8 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
     }
 }
 
-add_filter('woocommerce_payment_gateways', array($this, 'add_gateway_class'));
-public function add_gateway_class($methods) {
+add_filter('woocommerce_payment_gateways', 'add_gateway_class');
+function add_gateway_class($methods) {
     $methods[] = 'WC_Gateway_UnelmaPay';
     return $methods;
 }
