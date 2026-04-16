@@ -38,16 +38,26 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_api_wc_gateway_unelmapay', array($this, 'handle_ipn'));
         add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
+        add_action('rest_api_init', array($this, 'register_rest_routes'));
     }
 
     public function is_available() {
         error_log('=== UnelmaPay is_available() Called ===');
         error_log('merchant_id: ' . $this->merchant_id);
         error_log('merchant_password: ' . (!empty($this->merchant_password) ? 'SET' : 'EMPTY'));
-        
+        error_log('sandbox_mode: ' . ($this->sandbox_mode ? 'ENABLED' : 'DISABLED'));
+        error_log('enabled: ' . ($this->get_option('enabled') === 'yes' ? 'YES' : 'NO'));
+
         if (empty($this->merchant_id) || empty($this->merchant_password)) {
+            error_log('UnelmaPay is not available: Merchant ID or Password is missing.');
             return false;
         }
+
+        if ($this->get_option('enabled') !== 'yes') {
+            error_log('UnelmaPay is not available: Gateway is disabled.');
+            return false;
+        }
+
         return parent::is_available();
     }
 
@@ -320,5 +330,37 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         wc_nocache_headers();
         echo $this->generate_payment_form($order);
         exit;
+    }
+
+    public function register_rest_routes() {
+        error_log('=== Registering REST API Routes ===');
+        register_rest_route('unelmamail/v1', '/webhook/(?P<hook>[a-zA-Z0-9_-]+)', array(
+            'methods'  => 'POST',
+            'callback' => array($this, 'handle_webhook'),
+            'args'     => array(
+                'hook' => array(
+                    'required' => true,
+                    'validate_callback' => function($param, $request, $key) {
+                        return is_string($param);
+                    }
+                ),
+            ),
+            'permission_callback' => '__return_true',
+        ));
+    }
+
+    public function handle_webhook(WP_REST_Request $request) {
+        $hook = $request->get_param('hook');
+        $body = $request->get_body();
+
+        $this->log('Webhook received: Hook=' . $hook . ', Body=' . $body);
+
+        $response = array(
+            'status' => 'success',
+            'message' => 'Webhook received successfully',
+            'hook' => $hook,
+        );
+
+        return new WP_REST_Response($response, 200);
     }
 }
