@@ -26,9 +26,9 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $this->debug_mode         = 'yes' === $this->get_option('debug_mode');
 
         if ($this->sandbox_mode) {
-            $this->payment_url = 'https://dev.unelmapay.com/sci/form';
+            $this->payment_url = 'https://dev.unelmapay.com/merchant_api/payrequest';
         } else {
-            $this->payment_url = 'https://unelmapay.com.np/sci/form';
+            $this->payment_url = 'https://unelmapay.com.np/merchant_api/payrequest';
         }
 
         $this->success_url       = $this->get_option('success_url');
@@ -150,20 +150,42 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
         $this->log('Processing payment for order #' . $order_id);
 
-        $redirect_url = add_query_arg(
-            array(
-                'order_id' => $order_id,
-                'key'      => $order->get_order_key(),
+        $response = wp_remote_post($this->payment_url, array(
+            'body' => array(
+                'merchant' => $this->merchant_id,
+                'amount' => $order->get_total(),
+                'currency' => 'USD',
+                'custom' => $order_id,
+                'return_url' => $this->success_url,
+                'fail_url' => $this->fail_url,
+                'cancel_url' => $this->cancel_url,
+                'notify_url' => WC()->api_request_url('WC_Gateway_UnelmaPay'),
             ),
-            WC()->api_request_url('unelmapay_redirect')
-        );
+        ));
 
-        $this->log('Redirect URL for order #' . $order_id . ': ' . $redirect_url);
+        if (is_wp_error($response)) {
+            $this->log('Payment request failed: ' . $response->get_error_message());
+            wc_add_notice(__('Payment error: Could not connect to UnelmaPay.', 'unelmapay-woocommerce'), 'error');
+            return;
+        }
 
-        return array(
-            'result'   => 'success',
-            'redirect' => $redirect_url,
-        );
+        $response_body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (isset($response_body['payment_id'])) {
+            $payment_id = $response_body['payment_id'];
+            $redirect_url = 'https://dev.unelmapay.com/pay/' . $payment_id;
+
+            $this->log('Redirecting to UnelmaPay payment page: ' . $redirect_url);
+
+            return array(
+                'result'   => 'success',
+                'redirect' => $redirect_url,
+            );
+        } else {
+            $this->log('Payment request failed: ' . print_r($response_body, true));
+            wc_add_notice(__('Payment error: Invalid response from UnelmaPay.', 'unelmapay-woocommerce'), 'error');
+            return;
+        }
     }
 
     public function receipt_page($order_id) {
@@ -178,7 +200,7 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
     protected function generate_payment_form($order) {
         $order_id = $order->get_id();
         $amount = $order->get_total();
-        $currency = 'debit_base';
+        $currency = 'NPR';
         
         $item_names = array();
         foreach ($order->get_items() as $item) {
@@ -193,8 +215,6 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $fail_url = !empty($this->fail_url) ? $this->fail_url : $order->get_checkout_payment_url();
         $cancel_url = !empty($this->cancel_url) ? $this->cancel_url : $order->get_cancel_order_url_raw();
         $notify_url = WC()->api_request_url('WC_Gateway_UnelmaPay');
-
-        $this->log('Payment form data: ' . print_r($_POST, true));
 
         $this->log('Payment form data for order #' . $order_id . ': merchant=' . $this->merchant_id . ', amount=' . $amount . ', notify_url=' . $notify_url);
 
@@ -214,30 +234,6 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $form_html .= '<button type="submit" class="button alt" id="submit_unelmapay_payment_form">' . $logo_svg . __('Pay with UnelmaPay', 'unelmapay-woocommerce') . '</button>';
         $form_html .= '<a class="button cancel" href="' . esc_url($cancel_url) . '">' . __('Cancel order &amp; restore cart', 'unelmapay-woocommerce') . '</a>';
         $form_html .= '</form>';
-
-        $form_html .= '<script type="text/javascript">
-            jQuery(function($){
-                $("body").block({
-                    message: "' . esc_js(__('Thank you for your order. We are now redirecting you to UnelmaPay to make payment.', 'unelmapay-woocommerce')) . '",
-                    baseZ: 99999,
-                    overlayCSS: {
-                        background: "#fff",
-                        opacity: 0.6
-                    },
-                    css: {
-                        padding:        "20px",
-                        zindex:         "9999999",
-                        textAlign:      "center",
-                        color:          "#555",
-                        border:         "3px solid #aaa",
-                        backgroundColor:"#fff",
-                        cursor:         "wait",
-                        lineHeight:     "24px",
-                    }
-                });
-                $("#submit_unelmapay_payment_form").click();
-            });
-        </script>';
 
         return $form_html;
     }
