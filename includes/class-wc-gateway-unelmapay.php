@@ -149,6 +149,14 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $order = wc_get_order($order_id);
 
         $this->log('Processing payment for order #' . $order_id);
+        $this->log('Using API Key: ' . $this->merchant_password);
+        $this->log('Payment URL: ' . $this->payment_url);
+
+        $item_name = 'Order #' . $order_id;
+        $amount = $order->get_total();
+
+        $this->log('Item Name: ' . $item_name);
+        $this->log('Amount: ' . $amount);
 
         $response = wp_remote_post($this->payment_url, array(
             'headers' => array(
@@ -156,8 +164,8 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             ),
             'body' => array(
                 'merchant'    => $this->merchant_id,
-                'item_name'   => 'Order #' . $order_id,
-                'amount'      => $order->get_total(),
+                'item_name'   => $item_name,
+                'amount'      => $amount,
                 'currency'    => get_woocommerce_currency(),
                 'custom'      => 'customer_id_' . $order->get_customer_id(),
                 'return_url'  => $this->success_url ?: $this->get_return_url($order),
@@ -167,6 +175,22 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             ),
         ));
 
+        $this->log('Request Headers: ' . print_r(array(
+            'X-API-Key' => $this->merchant_password,
+        ), true));
+
+        $this->log('Request Body: ' . print_r(array(
+            'merchant'    => $this->merchant_id,
+            'item_name'   => $item_name,
+            'amount'      => $amount,
+            'currency'    => get_woocommerce_currency(),
+            'custom'      => 'customer_id_' . $order->get_customer_id(),
+            'return_url'  => $this->success_url ?: $this->get_return_url($order),
+            'fail_url'    => $this->fail_url ?: $order->get_checkout_payment_url(),
+            'cancel_url'  => $this->cancel_url ?: $order->get_cancel_order_url_raw(),
+            'notify_url'  => WC()->api_request_url('WC_Gateway_UnelmaPay'),
+        ), true));
+
         if (is_wp_error($response)) {
             $this->log('Payment request failed: ' . $response->get_error_message());
             wc_add_notice(__('Payment error: Could not connect to UnelmaPay.', 'unelmapay-woocommerce'), 'error');
@@ -174,6 +198,8 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         }
 
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
+
+        $this->log('Response Body: ' . print_r($response_body, true));
 
         if (isset($response_body['payment_id'])) {
             $payment_id = $response_body['payment_id'];
