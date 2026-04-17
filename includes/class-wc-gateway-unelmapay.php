@@ -27,8 +27,10 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
         if ($this->sandbox_mode) {
             $this->payment_url = 'https://dev.unelmapay.com/merchant_api/payrequest';
+            $this->log('Using sandbox environment: ' . $this->payment_url);
         } else {
             $this->payment_url = 'https://unelmapay.com.np/merchant_api/payrequest';
+            $this->log('Using production environment: ' . $this->payment_url);
         }
 
         $this->success_url       = $this->get_option('success_url');
