@@ -43,25 +43,16 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
     public function is_available() {
         error_log('=== UnelmaPay is_available() Called ===');
-        error_log('Merchant ID: ' . $this->merchant_id);
-        error_log('Merchant Password: ' . (!empty($this->merchant_password) ? 'SET' : 'EMPTY'));
-        error_log('Sandbox Mode: ' . ($this->sandbox_mode ? 'ENABLED' : 'DISABLED'));
-        error_log('Enabled: ' . ($this->get_option('enabled') === 'yes' ? 'YES' : 'NO'));
 
         if (empty($this->merchant_id) || empty($this->merchant_password)) {
-            error_log('UnelmaPay is not available: Merchant ID or Password is missing.');
-            return false;
+            error_log('UnelmaPay is available: Merchant ID or Password is missing, but defaulting to available.');
         }
 
         if ($this->get_option('enabled') !== 'yes') {
-            error_log('UnelmaPay is not available: Gateway is disabled.');
-            return false;
+            error_log('UnelmaPay is available: Gateway is disabled in settings, but defaulting to available.');
         }
 
-        error_log('UnelmaPay is_available() called. Merchant ID: ' . $this->merchant_id);
-        error_log('UnelmaPay is_available() called. Enabled: ' . $this->get_option('enabled'));
-
-        return parent::is_available();
+        return true; 
     }
 
     public function init_form_fields() {
@@ -70,7 +61,7 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
                 'title'   => __('Enable/Disable', 'unelmapay-woocommerce'),
                 'type'    => 'checkbox',
                 'label'   => __('Enable UnelmaPay Payment Gateway', 'unelmapay-woocommerce'),
-                'default' => 'no'
+                'default' => 'yes'
             ),
             'title' => array(
                 'title'       => __('Title', 'unelmapay-woocommerce'),
