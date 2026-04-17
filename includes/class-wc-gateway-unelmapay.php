@@ -154,8 +154,21 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $this->log('Using API Key: ' . $this->merchant_password);
         $this->log('Payment URL: ' . $this->payment_url);
 
-        $item_name = 'Order #' . $order_id;
+        $item_names = array();
+        foreach ($order->get_items() as $item) {
+            $item_names[] = $item->get_name();
+        }
+        $item_name = implode(', ', $item_names);
+        if (strlen($item_name) > 100) {
+            $item_name = substr($item_name, 0, 97) . '...';
+        }
+
         $amount = $order->get_total();
+        $currency = get_woocommerce_currency();
+        $return_url = !empty($this->success_url) ? $this->success_url : $this->get_return_url($order);
+        $fail_url = !empty($this->fail_url) ? $this->fail_url : $order->get_checkout_payment_url();
+        $cancel_url = !empty($this->cancel_url) ? $this->cancel_url : $order->get_cancel_order_url_raw();
+        $notify_url = WC()->api_request_url('WC_Gateway_UnelmaPay');
 
         $this->log('Item Name: ' . $item_name);
         $this->log('Amount: ' . $amount);
@@ -165,15 +178,16 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
                 'X-API-Key' => $this->merchant_password,
             ),
             'body' => array(
-                'merchant'    => $this->merchant_id,
+                'merchant_id' => $this->merchant_id, // Corrected key
                 'item_name'   => $item_name,
                 'amount'      => $amount,
-                'currency'    => get_woocommerce_currency(),
+                'currency'    => $currency,
+                'order_id'    => $order->get_order_number(), // Added order_id
                 'custom'      => 'customer_id_' . $order->get_customer_id(),
-                'return_url'  => $this->success_url ?: $this->get_return_url($order),
-                'fail_url'    => $this->fail_url ?: $order->get_checkout_payment_url(),
-                'cancel_url'  => $this->cancel_url ?: $order->get_cancel_order_url_raw(),
-                'notify_url'  => WC()->api_request_url('WC_Gateway_UnelmaPay'),
+                'return_url'  => $return_url,
+                'fail_url'    => $fail_url,
+                'cancel_url'  => $cancel_url,
+                'notify_url'  => $notify_url,
             ),
         ));
 
@@ -182,15 +196,16 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         ), true));
 
         $this->log('Request Body: ' . print_r(array(
-            'merchant'    => $this->merchant_id,
+            'merchant_id' => $this->merchant_id,
             'item_name'   => $item_name,
             'amount'      => $amount,
-            'currency'    => get_woocommerce_currency(),
+            'currency'    => $currency,
+            'order_id'    => $order->get_order_number(),
             'custom'      => 'customer_id_' . $order->get_customer_id(),
-            'return_url'  => $this->success_url ?: $this->get_return_url($order),
-            'fail_url'    => $this->fail_url ?: $order->get_checkout_payment_url(),
-            'cancel_url'  => $this->cancel_url ?: $order->get_cancel_order_url_raw(),
-            'notify_url'  => WC()->api_request_url('WC_Gateway_UnelmaPay'),
+            'return_url'  => $return_url,
+            'fail_url'    => $fail_url,
+            'cancel_url'  => $cancel_url,
+            'notify_url'  => $notify_url,
         ), true));
 
         if (is_wp_error($response)) {
@@ -238,7 +253,8 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         foreach ($order->get_items() as $item) {
             $item_names[] = $item->get_name();
         }
-        $item_name = implode(', ', $item_names);
+        $item_name = implode(', ', $item_names);        <?php
+        'order_id' => $order->get_order_number(),
         if (strlen($item_name) > 100) {
             $item_name = substr($item_name, 0, 97) . '...';
         }
