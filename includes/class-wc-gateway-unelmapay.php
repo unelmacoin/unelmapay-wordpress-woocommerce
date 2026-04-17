@@ -203,6 +203,8 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $cancel_url = !empty($this->cancel_url) ? $this->cancel_url : $order->get_cancel_order_url_raw();
         $notify_url = WC()->api_request_url('WC_Gateway_UnelmaPay');
 
+        $this->log('Payment form data: ' . print_r($_POST, true));
+
         $this->log('Payment form data for order #' . $order_id . ': merchant=' . $this->merchant_id . ', amount=' . $amount . ', notify_url=' . $notify_url);
 
         $form_html = '<form method="POST" action="' . esc_url($this->payment_url) . '" id="unelmapay_payment_form">';
@@ -266,7 +268,7 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $currency = isset($_POST['currency']) ? sanitize_text_field($_POST['currency']) : '';
         $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
 
-        $hash_string = $total . ':' . $this->merchant_password . ':' . $date . ':' . $id_transfer;
+        $hash_string = $total . ':' . $this->test123456 . ':' . $date . ':' . $id_transfer;
         $calculated_hash = strtoupper(md5($hash_string));
 
         $this->log('IPN Hash verification: received=' . $received_hash . ', calculated=' . $calculated_hash);
