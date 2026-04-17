@@ -152,14 +152,17 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
         $response = wp_remote_post($this->payment_url, array(
             'body' => array(
-                'merchant' => $this->merchant_id,
-                'amount' => $order->get_total(),
-                'currency' => 'USD',
-                'custom' => $order_id,
-                'return_url' => $this->success_url,
-                'fail_url' => $this->fail_url,
-                'cancel_url' => $this->cancel_url,
-                'notify_url' => WC()->api_request_url('WC_Gateway_UnelmaPay'),
+                'merchant_id' => $this->merchant_id,
+                'amount'      => $order->get_total(),
+                'currency'    => 'NPR', 
+                'item_name'   => implode(', ', array_map(function($item) {
+                    return $item->get_name();
+                }, $order->get_items())),
+                'order_id'    => $order->get_id(),
+                'success_url' => !empty($this->success_url) ? $this->success_url : $this->get_return_url($order),
+                'fail_url'    => !empty($this->fail_url) ? $this->fail_url : $order->get_checkout_payment_url(),
+                'cancel_url'  => !empty($this->cancel_url) ? $this->cancel_url : $order->get_cancel_order_url_raw(),
+                'custom'      => 'customer_id_' . $order->get_customer_id(),
             ),
         ));
 
