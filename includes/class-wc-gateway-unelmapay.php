@@ -218,10 +218,9 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
         $this->log('Response Body: ' . print_r($response_body, true));
 
-        if (isset($response_body['payment_id'])) {
-            $payment_id = $response_body['payment_id'];
-            $redirect_url = 'https://dev.unelmapay.com/pay/' . $payment_id;
-
+        if (isset($response_body['data']['payment_id'])) {
+            $payment_id = $response_body['data']['payment_id'];
+            $redirect_url = $response_body['data']['payment_link'];
             $this->log('Redirecting to UnelmaPay payment page: ' . $redirect_url);
 
             return array(
