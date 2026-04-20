@@ -253,8 +253,7 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         foreach ($order->get_items() as $item) {
             $item_names[] = $item->get_name();
         }
-        $item_name = implode(', ', $item_names);        <?php
-        'order_id' => $order->get_order_number(),
+        $item_name = implode(', ', $item_names);       
         if (strlen($item_name) > 100) {
             $item_name = substr($item_name, 0, 97) . '...';
         }
