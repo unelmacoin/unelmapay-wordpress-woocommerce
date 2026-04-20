@@ -318,19 +318,46 @@ class UnelmaPay_Core {
             return;
         }
         
-        $this->log('IPN Request received: ' . print_r($_POST, true));
-        
-        if (empty($_POST)) {
-            $this->log('IPN Error: Empty POST data');
+        $request_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN';
+        $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : (isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : 'not set');
+        $raw_body = file_get_contents('php://input');
+
+        $this->log('IPN Request method: ' . $request_method);
+        $this->log('IPN Content-Type: ' . $content_type);
+        $this->log('IPN Raw body: ' . $raw_body);
+        $this->log('IPN $_POST: ' . print_r($_POST, true));
+
+        $post_data = $_POST;
+
+        if (empty($post_data) && !empty($raw_body)) {
+            $content_type_lower = strtolower($content_type);
+
+            if (strpos($content_type_lower, 'application/json') !== false) {
+                $decoded = json_decode($raw_body, true);
+                if (is_array($decoded)) {
+                    $post_data = $decoded;
+                    $this->log('IPN: Parsed JSON body into post_data');
+                }
+            } else {
+                parse_str($raw_body, $parsed);
+                if (!empty($parsed)) {
+                    $post_data = $parsed;
+                    $this->log('IPN: Parsed raw body as form-urlencoded into post_data');
+                }
+            }
+        }
+
+        if (empty($post_data)) {
+            $this->log('IPN Error: Empty POST data after all parse attempts. Method=' . $request_method . ', Content-Type=' . $content_type . ', Raw body length=' . strlen($raw_body));
             status_header(400);
             exit('Empty POST data');
         }
         
-        $total = isset($_POST['total']) ? sanitize_text_field($_POST['total']) : '';
-        $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
-        $id_transfer = isset($_POST['id_transfer']) ? sanitize_text_field($_POST['id_transfer']) : '';
-        $received_hash = isset($_POST['hash']) ? sanitize_text_field($_POST['hash']) : '';
-        $custom = isset($_POST['custom']) ? sanitize_text_field($_POST['custom']) : '';
+        $total = isset($post_data['total']) ? sanitize_text_field($post_data['total']) : '';
+        $date = isset($post_data['date']) ? sanitize_text_field($post_data['date']) : '';
+        $id_transfer = isset($post_data['id_transfer']) ? sanitize_text_field($post_data['id_transfer']) : '';
+        $received_hash = isset($post_data['hash']) ? sanitize_text_field($post_data['hash']) : '';
+        $custom = isset($post_data['custom']) ? sanitize_text_field($post_data['custom']) : '';
         
         $hash_string = $total . ':' . $this->merchant_password . ':' . $date . ':' . $id_transfer;
         $calculated_hash = strtoupper(md5($hash_string));
