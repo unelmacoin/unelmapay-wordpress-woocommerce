@@ -93,6 +93,29 @@ For support and documentation, please visit:
 4. Save changes
 5. Use shortcode: `[unelmapay_button amount="100" title="Product Name"]`
 
+== External services ==
+
+This plugin connects to the UnelmaPay payment processing API to securely handle 
+payment transactions.
+
+It sends payment data including merchant ID, item name, amount, currency, 
+order/payment ID, and return URLs when a user initiates a payment by clicking 
+the payment button. This data is transmitted securely over HTTPS.
+
+For testing, the sandbox environment (https://dev.unelmapay.com/sci/form) is used. 
+This environment is strictly for development and testing purposes and does not 
+process real transactions. It redirects to the developer documentation page: 
+[UnelmaPay Developer Portal](https://dev.unelmapay.com/developers).
+For live payments, the production environment 
+(https://unelmapay.com.np/sci/form) is used. 
+This URL is intended for programmatic use by the plugin and may not display meaningful 
+content when accessed directly via a browser. If you encounter a "Coming Soon" page, 
+this is expected behavior as the URL is not designed for direct browser access.
+
+This service is provided by Unelma Platforms: 
+[Terms of Service](https://unelmapay.com.np/agreement), 
+[Privacy Policy](https://unelmapay.com.np/privacy).
+
 == Frequently Asked Questions ==
 
 = Do I need WooCommerce? =
