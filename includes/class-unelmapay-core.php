@@ -454,14 +454,7 @@ class UnelmaPay_Core {
         $completed_at = get_post_meta($post->ID, '_completed_at', true);
         
         ?>
-        <style>
-            .unelmapay-details-table { width: 100%; border-collapse: collapse; }
-            .unelmapay-details-table th { text-align: left; padding: 10px; background: #f5f5f5; width: 30%; }
-            .unelmapay-details-table td { padding: 10px; border-bottom: 1px solid #ddd; }
-            .unelmapay-status { padding: 5px 10px; border-radius: 3px; font-weight: bold; }
-            .unelmapay-status-completed { background: #d4edda; color: #155724; }
-            .unelmapay-status-pending { background: #fff3cd; color: #856404; }
-        </style>
+ 
         <table class="unelmapay-details-table">
             <tr>
                 <th><?php _e('Payment ID', 'unelmapay-woocommerce'); ?></th>
@@ -536,7 +529,7 @@ class UnelmaPay_Core {
                     </div>
                     
                     <p style="margin-top: 15px;">
-                        <a href="<?php echo admin_url('admin.php?page=unelmapay-logs&action=clear'); ?>" class="button" onclick="return confirm('<?php esc_attr_e('Are you sure you want to clear all UnelmaPay logs?', 'unelmapay-woocommerce'); ?>');">
+                        <a href="<?php echo admin_url('admin.php?page=unelmapay-logs&action=clear'); ?>" class="button" onclick="return confirm('<?php esc_attr_e('Are you sure you want to clear all UnelmaPay logs?', 'unelmapay-woocommerce'); ?>');
                             <?php _e('Clear UnelmaPay Logs', 'unelmapay-woocommerce'); ?>
                         </a>
                         <a href="<?php echo admin_url('admin.php?page=unelmapay-logs&action=download'); ?>" class="button">
@@ -562,7 +555,6 @@ class UnelmaPay_Core {
                     });
                     file_put_contents($log_file, implode("\n", $filtered_logs));
                     echo '<div class="notice notice-success"><p>' . __('UnelmaPay logs cleared successfully.', 'unelmapay-woocommerce') . '</p></div>';
-                    echo '<script>setTimeout(function(){ window.location.href = "' . admin_url('admin.php?page=unelmapay-logs') . '"; }, 2000);</script>';
                 }
                 
                 if ($_GET['action'] === 'download' && file_exists($log_file)) {
@@ -604,3 +596,27 @@ class UnelmaPay_Core {
         }
     }
 }
+
+wp_enqueue_script(
+    'unelmapay-redirect',
+    plugins_url('../assets/js/unelmapay-redirect.js', __FILE__),
+    array(),
+    '1.0.0',
+    true
+);
+wp_localize_script('unelmapay-redirect', 'upay_redirect_url', admin_url('admin.php?page=unelmapay-logs'));
+
+wp_register_script('unelmapay-inline', false);
+wp_enqueue_script('unelmapay-inline');
+$redirect_url = admin_url('admin.php?page=unelmapay-logs');
+wp_add_inline_script('unelmapay-inline', 'setTimeout(function(){ window.location.href = "' . esc_js($redirect_url) . '"; }, 2000);');
+add_action('admin_enqueue_scripts', function($hook) {
+    if (isset($_GET['page']) && strpos($_GET['page'], 'unelmapay') !== false) {
+        wp_enqueue_style(
+            'unelmapay-admin',
+            plugins_url('../assets/css/unelmapay-admin.css', __FILE__),
+            array(),
+            '1.0.0'
+        );
+    }
+});

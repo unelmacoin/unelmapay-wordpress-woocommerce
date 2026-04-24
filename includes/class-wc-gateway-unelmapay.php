@@ -180,30 +180,6 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $form_html .= '<a class="button cancel" href="' . esc_url($cancel_url) . '">' . __('Cancel order &amp; restore cart', 'unelmapay-woocommerce') . '</a>';
         $form_html .= '</form>';
 
-        $form_html .= '<script type="text/javascript">
-            jQuery(function($){
-                $("body").block({
-                    message: "' . esc_js(__('Thank you for your order. We are now redirecting you to UnelmaPay to make payment.', 'unelmapay-woocommerce')) . '",
-                    baseZ: 99999,
-                    overlayCSS: {
-                        background: "#fff",
-                        opacity: 0.6
-                    },
-                    css: {
-                        padding:        "20px",
-                        zindex:         "9999999",
-                        textAlign:      "center",
-                        color:          "#555",
-                        border:         "3px solid #aaa",
-                        backgroundColor:"#fff",
-                        cursor:         "wait",
-                        lineHeight:     "24px",
-                    }
-                });
-                $("#submit_unelmapay_payment_form").click();
-            });
-        </script>';
-
         return $form_html;
     }
 
@@ -330,6 +306,22 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             }
             $logger = wc_get_logger();
             $logger->info($message, array('source' => 'unelmapay'));
+        }
+    }
+
+    add_action('wp_enqueue_scripts', array($this, 'enqueue_checkout_script'));
+    public function enqueue_checkout_script() {
+        if (is_checkout()) {
+            wp_enqueue_script(
+                'unelmapay-checkout',
+                plugins_url('../assets/js/unelmapay-checkout.js', __FILE__),
+                array('jquery'),
+                '1.0.0',
+                true
+            );
+            wp_localize_script('unelmapay-checkout', 'upay_checkout_message', array(
+                'message' => __('Thank you for your order. We are now redirecting you to UnelmaPay to make payment.', 'unelmapay-woocommerce')
+            ));
         }
     }
 }
