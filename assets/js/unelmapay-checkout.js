@@ -17,8 +17,8 @@ jQuery(function($){
             lineHeight:     "24px",
         }
     });
-    $("#submit_unelmapay_payment_form").click();
+    $("#submit_unelmapay_payment_form").trigger("click");
     setTimeout(function(){
-        window.location.href = upay_redirect_url;
+        window.location.href = upay_vars.redirect_url;
     }, 2000);
 });

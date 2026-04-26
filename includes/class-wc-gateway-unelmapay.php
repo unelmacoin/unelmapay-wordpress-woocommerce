@@ -140,10 +140,29 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
     public function receipt_page($order_id) {
         $order = wc_get_order($order_id);
 
+        $redirect_url = $this->get_return_url($order); 
+        $checkout_message = __('Redirecting to UnelmaPay...', 'unelmapay-woocommerce');
+
         echo '<p>' . esc_html__('Thank you for your order. Please click the button below to pay with UnelmaPay.', 'unelmapay-woocommerce') . '</p>';
 
         $payment_form_html = $this->generate_payment_form($order);
         echo wp_kses($payment_form_html, $this->get_receipt_allowed_html());
+
+        ?>
+        <script>
+        var upay_vars = {
+            redirect_url: <?php echo json_encode($redirect_url); ?>,
+            checkout_message: <?php echo json_encode($checkout_message); ?>
+        };
+        </script>
+        <?php
+        wp_enqueue_script(
+            'unelmapay-checkout',
+            plugins_url('../assets/js/unelmapay-checkout.js', __FILE__),
+            array('jquery'),
+            '1.0.0',
+            true
+        );
     }
 
     protected function generate_payment_form($order) {
@@ -322,8 +341,9 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
                 '1.0.0',
                 true
             );
-            wp_localize_script('unelmapay-checkout', 'upay_checkout_message', array(
-                'message' => __('Thank you for your order. We are now redirecting you to UnelmaPay to make payment.', 'unelmapay-woocommerce')
+            wp_localize_script('unelmapay-checkout', 'upay_vars', array(
+                'redirect_url' => $redirect_url,
+                'checkout_message' => $checkout_message,
             ));
         }
     }
