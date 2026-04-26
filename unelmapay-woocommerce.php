@@ -37,7 +37,7 @@ function unelmapay_init() {
         });
     }
     
-    UnelmaPay_Core::instance();
+    UNELMAPAY_Core::instance();
 }
 
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function($links) {

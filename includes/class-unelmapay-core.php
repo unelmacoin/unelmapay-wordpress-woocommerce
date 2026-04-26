@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class UnelmaPay_Core {
+class UNELMAPAY_Core {
     
     private static $instance = null;
     private $merchant_id;
