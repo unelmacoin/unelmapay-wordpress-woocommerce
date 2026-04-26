@@ -137,16 +137,18 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
     public function receipt_page($order_id) {
         $order = wc_get_order($order_id);
-        
-        echo '<p>' . __('Thank you for your order. Please click the button below to pay with UnelmaPay.', 'unelmapay-woocommerce') . '</p>';
-        echo $this->generate_payment_form($order);
+
+        echo '<p>' . esc_html__('Thank you for your order. Please click the button below to pay with UnelmaPay.', 'unelmapay-woocommerce') . '</p>';
+
+        $payment_form_html = $this->generate_payment_form($order);
+        echo wp_kses($payment_form_html, $this->get_receipt_allowed_html());
     }
 
     protected function generate_payment_form($order) {
         $order_id = $order->get_id();
         $amount = $order->get_total();
         $currency = 'debit_base';
-        
+
         $item_names = array();
         foreach ($order->get_items() as $item) {
             $item_names[] = $item->get_name();
@@ -197,7 +199,7 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             $this->log('IPN health-check ping received (GET)');
             status_header(200);
             header('Content-Type: application/json');
-            echo json_encode(array(
+            wp_send_json(array(
                 'status'    => 'ok',
                 'gateway'   => 'UnelmaPay',
                 'endpoint'  => 'IPN',
@@ -295,7 +297,7 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $this->log('IPN Success: Order #' . $order_id . ' marked as paid. Transaction ID: ' . $id_transfer);
 
         status_header(200);
-        echo 'IPN Received and Verified';
+        echo esc_html__('IPN Received and Verified', 'unelmapay-woocommerce');
         exit;
     }
 
@@ -323,5 +325,51 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
                 'message' => __('Thank you for your order. We are now redirecting you to UnelmaPay to make payment.', 'unelmapay-woocommerce')
             ));
         }
+    }
+
+    protected function get_receipt_allowed_html() {
+        return array(
+            'form' => array(
+                'method' => true,
+                'action' => true,
+                'id' => true,
+            ),
+            'input' => array(
+                'type' => true,
+                'name' => true,
+                'value' => true,
+            ),
+            'button' => array(
+                'type' => true,
+                'class' => true,
+                'id' => true,
+            ),
+            'a' => array(
+                'class' => true,
+                'href' => true,
+            ),
+            'svg' => array(
+                'xmlns' => true,
+                'viewbox' => true,
+                'width' => true,
+                'height' => true,
+                'style' => true,
+            ),
+            'circle' => array(
+                'cx' => true,
+                'cy' => true,
+                'r' => true,
+                'fill' => true,
+            ),
+            'text' => array(
+                'x' => true,
+                'y' => true,
+                'font-family' => true,
+                'font-size' => true,
+                'font-weight' => true,
+                'fill' => true,
+                'text-anchor' => true,
+            ),
+        );
     }
 }
