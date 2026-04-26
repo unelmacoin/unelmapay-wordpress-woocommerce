@@ -632,4 +632,15 @@ class UNELMAPAY_Core {
             error_log('[UnelmaPay] ' . $message);
         }
     }
+
+    public function enqueue_admin_assets($hook) {
+        if (isset($_GET['page']) && strpos($_GET['page'], 'unelmapay') !== false) {
+            wp_enqueue_style(
+                'unelmapay-admin',
+                plugins_url('../assets/css/unelmapay-admin.css', __FILE__),
+                array(),
+                '1.0.0'
+            );
+        }
+    }
 }
