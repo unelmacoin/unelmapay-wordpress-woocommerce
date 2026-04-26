@@ -6,7 +6,7 @@
  * Version: 2.0.1
  * Author: UnelmaPay
  * Author URI: https://unelmapay.com/
- * Text Domain: unelmapay-woocommerce
+ * Text Domain: unelmapay-payment-gateway
  * Domain Path: /languages
  * Requires at least: 5.2
  * Requires PHP: 7.2

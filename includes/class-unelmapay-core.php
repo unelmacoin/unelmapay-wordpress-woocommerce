@@ -52,13 +52,13 @@ class UNELMAPAY_Core {
     public function register_post_type() {
         register_post_type('unelmapay_payment', array(
             'labels' => array(
-                'name' => __('Payments', 'unelmapay-woocommerce'),
-                'singular_name' => __('Payment', 'unelmapay-woocommerce'),
-                'add_new' => __('Add New', 'unelmapay-woocommerce'),
-                'add_new_item' => __('Add New Payment', 'unelmapay-woocommerce'),
-                'edit_item' => __('Edit Payment', 'unelmapay-woocommerce'),
-                'view_item' => __('View Payment', 'unelmapay-woocommerce'),
-                'all_items' => __('All Payments', 'unelmapay-woocommerce'),
+                'name' => __('Payments', 'unelmapay-payment-gateway'),
+                'singular_name' => __('Payment', 'unelmapay-payment-gateway'),
+                'add_new' => __('Add New', 'unelmapay-payment-gateway'),
+                'add_new_item' => __('Add New Payment', 'unelmapay-payment-gateway'),
+                'edit_item' => __('Edit Payment', 'unelmapay-payment-gateway'),
+                'view_item' => __('View Payment', 'unelmapay-payment-gateway'),
+                'all_items' => __('All Payments', 'unelmapay-payment-gateway'),
             ),
             'public' => false,
             'show_ui' => true,
@@ -73,8 +73,8 @@ class UNELMAPAY_Core {
     
     public function add_admin_menu() {
         add_menu_page(
-            __('UnelmaPay', 'unelmapay-woocommerce'),
-            __('UnelmaPay', 'unelmapay-woocommerce'),
+            __('UnelmaPay', 'unelmapay-payment-gateway'),
+            __('UnelmaPay', 'unelmapay-payment-gateway'),
             'manage_options',
             'unelmapay-settings',
             array($this, 'settings_page'),
@@ -84,8 +84,8 @@ class UNELMAPAY_Core {
         
         add_submenu_page(
             'unelmapay-settings',
-            __('Settings', 'unelmapay-woocommerce'),
-            __('Settings', 'unelmapay-woocommerce'),
+            __('Settings', 'unelmapay-payment-gateway'),
+            __('Settings', 'unelmapay-payment-gateway'),
             'manage_options',
             'unelmapay-settings',
             array($this, 'settings_page')
@@ -93,8 +93,8 @@ class UNELMAPAY_Core {
         
         add_submenu_page(
             'unelmapay-settings',
-            __('Debug Logs', 'unelmapay-woocommerce'),
-            __('Debug Logs', 'unelmapay-woocommerce'),
+            __('Debug Logs', 'unelmapay-payment-gateway'),
+            __('Debug Logs', 'unelmapay-payment-gateway'),
             'manage_options',
             'unelmapay-logs',
             array($this, 'logs_page')
@@ -106,42 +106,42 @@ class UNELMAPAY_Core {
         
         add_settings_section(
             'unelmapay_main_section',
-            __('UnelmaPay Settings', 'unelmapay-woocommerce'),
+            __('UnelmaPay Settings', 'unelmapay-payment-gateway'),
             array($this, 'settings_section_callback'),
             'unelmapay-settings'
         );
         
-        add_settings_field('merchant_id', __('Merchant ID', 'unelmapay-woocommerce'), array($this, 'merchant_id_field'), 'unelmapay-settings', 'unelmapay_main_section');
-        add_settings_field('merchant_password', __('Merchant Password', 'unelmapay-woocommerce'), array($this, 'merchant_password_field'), 'unelmapay-settings', 'unelmapay_main_section');
-        add_settings_field('merchant_name', __('Merchant Name', 'unelmapay-woocommerce'), array($this, 'merchant_name_field'), 'unelmapay-settings', 'unelmapay_main_section');
-        add_settings_field('merchant_email', __('Merchant Email', 'unelmapay-woocommerce'), array($this, 'merchant_email_field'), 'unelmapay-settings', 'unelmapay_main_section');
-        add_settings_field('success_url', __('Success URL', 'unelmapay-woocommerce'), array($this, 'success_url_field'), 'unelmapay-settings', 'unelmapay_main_section');
-        add_settings_field('fail_url', __('Fail URL', 'unelmapay-woocommerce'), array($this, 'fail_url_field'), 'unelmapay-settings', 'unelmapay_main_section');
-        add_settings_field('cancel_url', __('Cancel URL', 'unelmapay-woocommerce'), array($this, 'cancel_url_field'), 'unelmapay-settings', 'unelmapay_main_section');
-        add_settings_field('sandbox_mode', __('Sandbox Mode', 'unelmapay-woocommerce'), array($this, 'sandbox_mode_field'), 'unelmapay-settings', 'unelmapay_main_section');
-        add_settings_field('debug_mode', __('Debug Mode', 'unelmapay-woocommerce'), array($this, 'debug_mode_field'), 'unelmapay-settings', 'unelmapay_main_section');
+        add_settings_field('merchant_id', __('Merchant ID', 'unelmapay-payment-gateway'), array($this, 'merchant_id_field'), 'unelmapay-settings', 'unelmapay_main_section');
+        add_settings_field('merchant_password', __('Merchant Password', 'unelmapay-payment-gateway'), array($this, 'merchant_password_field'), 'unelmapay-settings', 'unelmapay_main_section');
+        add_settings_field('merchant_name', __('Merchant Name', 'unelmapay-payment-gateway'), array($this, 'merchant_name_field'), 'unelmapay-settings', 'unelmapay_main_section');
+        add_settings_field('merchant_email', __('Merchant Email', 'unelmapay-payment-gateway'), array($this, 'merchant_email_field'), 'unelmapay-settings', 'unelmapay_main_section');
+        add_settings_field('success_url', __('Success URL', 'unelmapay-payment-gateway'), array($this, 'success_url_field'), 'unelmapay-settings', 'unelmapay_main_section');
+        add_settings_field('fail_url', __('Fail URL', 'unelmapay-payment-gateway'), array($this, 'fail_url_field'), 'unelmapay-settings', 'unelmapay_main_section');
+        add_settings_field('cancel_url', __('Cancel URL', 'unelmapay-payment-gateway'), array($this, 'cancel_url_field'), 'unelmapay-settings', 'unelmapay_main_section');
+        add_settings_field('sandbox_mode', __('Sandbox Mode', 'unelmapay-payment-gateway'), array($this, 'sandbox_mode_field'), 'unelmapay-settings', 'unelmapay_main_section');
+        add_settings_field('debug_mode', __('Debug Mode', 'unelmapay-payment-gateway'), array($this, 'debug_mode_field'), 'unelmapay-settings', 'unelmapay_main_section');
     }
     
     public function settings_section_callback() {
-        echo '<p>' . esc_html__('Configure your UnelmaPay payment gateway settings.', 'unelmapay-woocommerce') . '</p>';
+        echo '<p>' . esc_html__('Configure your UnelmaPay payment gateway settings.', 'unelmapay-payment-gateway') . '</p>';
         if (class_exists('WooCommerce')) {
-            echo '<div class="notice notice-info"><p>' . esc_html__('WooCommerce detected! You can also configure UnelmaPay in WooCommerce → Settings → Payments.', 'unelmapay-woocommerce') . '</p></div>';
+            echo '<div class="notice notice-info"><p>' . esc_html__('WooCommerce detected! You can also configure UnelmaPay in WooCommerce → Settings → Payments.', 'unelmapay-payment-gateway') . '</p></div>';
         }
-        echo '<div class="notice notice-info inline" style="margin-top: 10px;"><p><strong>' . esc_html__('Currency:', 'unelmapay-woocommerce') . '</strong> ' . esc_html__('All payments are processed in NPR (Nepalese Rupee), which is the base currency in the UnelmaPay system.', 'unelmapay-woocommerce') . '</p></div>';
+        echo '<div class="notice notice-info inline" style="margin-top: 10px;"><p><strong>' . esc_html__('Currency:', 'unelmapay-payment-gateway') . '</strong> ' . esc_html__('All payments are processed in NPR (Nepalese Rupee), which is the base currency in the UnelmaPay system.', 'unelmapay-payment-gateway') . '</p></div>';
     }
     
     public function merchant_id_field() {
         $options = get_option('unelmapay_settings');
         $value = isset($options['merchant_id']) ? $options['merchant_id'] : '';
         echo '<input type="text" name="unelmapay_settings[merchant_id]" value="' . esc_attr($value) . '" class="regular-text" />';
-        echo '<p class="description">' . esc_html__('Enter your UnelmaPay Merchant ID', 'unelmapay-woocommerce') . '</p>';
+        echo '<p class="description">' . esc_html__('Enter your UnelmaPay Merchant ID', 'unelmapay-payment-gateway') . '</p>';
     }
     
     public function merchant_password_field() {
         $options = get_option('unelmapay_settings');
         $value = isset($options['merchant_password']) ? $options['merchant_password'] : '';
         echo '<input type="password" name="unelmapay_settings[merchant_password]" value="' . esc_attr($value) . '" class="regular-text" />';
-        echo '<p class="description">' . esc_html__('Enter your UnelmaPay Merchant Password (used for IPN verification)', 'unelmapay-woocommerce') . '</p>';
+        echo '<p class="description">' . esc_html__('Enter your UnelmaPay Merchant Password (used for IPN verification)', 'unelmapay-payment-gateway') . '</p>';
     }
     
     public function sandbox_mode_field() {
@@ -149,43 +149,43 @@ class UNELMAPAY_Core {
         $checked = isset($options['sandbox_mode']) && $options['sandbox_mode'] === 'yes' ? 'checked' : '';
         echo '<input type="hidden" name="unelmapay_settings[sandbox_mode]" value="no" />';
         echo '<label><input type="checkbox" name="unelmapay_settings[sandbox_mode]" value="yes" ' . $checked . ' /> ';
-        echo esc_html__('Enable Sandbox Mode (dev.unelmapay.com)', 'unelmapay-woocommerce') . '</label>';
-        echo '<p class="description">' . esc_html__('Use sandbox environment for testing. Uncheck for production (unelmapay.com.np).', 'unelmapay-woocommerce') . '</p>';
+        echo esc_html__('Enable Sandbox Mode (dev.unelmapay.com)', 'unelmapay-payment-gateway') . '</label>';
+        echo '<p class="description">' . esc_html__('Use sandbox environment for testing. Uncheck for production (unelmapay.com.np).', 'unelmapay-payment-gateway') . '</p>';
     }
     
     public function merchant_name_field() {
         $options = get_option('unelmapay_settings');
         $value = isset($options['merchant_name']) ? $options['merchant_name'] : '';
         echo '<input type="text" name="unelmapay_settings[merchant_name]" value="' . esc_attr($value) . '" class="regular-text" />';
-        echo '<p class="description">' . esc_html__('Your business/merchant name (optional)', 'unelmapay-woocommerce') . '</p>';
+        echo '<p class="description">' . esc_html__('Your business/merchant name (optional)', 'unelmapay-payment-gateway') . '</p>';
     }
     
     public function merchant_email_field() {
         $options = get_option('unelmapay_settings');
         $value = isset($options['merchant_email']) ? $options['merchant_email'] : '';
         echo '<input type="email" name="unelmapay_settings[merchant_email]" value="' . esc_attr($value) . '" class="regular-text" />';
-        echo '<p class="description">' . esc_html__('Your merchant contact email (optional)', 'unelmapay-woocommerce') . '</p>';
+        echo '<p class="description">' . esc_html__('Your merchant contact email (optional)', 'unelmapay-payment-gateway') . '</p>';
     }
     
     public function success_url_field() {
         $options = get_option('unelmapay_settings');
         $value = isset($options['success_url']) ? $options['success_url'] : home_url('/payment-success/');
         echo '<input type="url" name="unelmapay_settings[success_url]" value="' . esc_attr($value) . '" class="regular-text" />';
-        echo '<p class="description">' . esc_html__('URL to redirect after successful payment (leave empty for homepage)', 'unelmapay-woocommerce') . '</p>';
+        echo '<p class="description">' . esc_html__('URL to redirect after successful payment (leave empty for homepage)', 'unelmapay-payment-gateway') . '</p>';
     }
     
     public function fail_url_field() {
         $options = get_option('unelmapay_settings');
         $value = isset($options['fail_url']) ? $options['fail_url'] : home_url('/payment-failed/');
         echo '<input type="url" name="unelmapay_settings[fail_url]" value="' . esc_attr($value) . '" class="regular-text" />';
-        echo '<p class="description">' . esc_html__('URL to redirect after failed payment (leave empty for homepage)', 'unelmapay-woocommerce') . '</p>';
+        echo '<p class="description">' . esc_html__('URL to redirect after failed payment (leave empty for homepage)', 'unelmapay-payment-gateway') . '</p>';
     }
     
     public function cancel_url_field() {
         $options = get_option('unelmapay_settings');
         $value = isset($options['cancel_url']) ? $options['cancel_url'] : home_url('/payment-cancelled/');
         echo '<input type="url" name="unelmapay_settings[cancel_url]" value="' . esc_attr($value) . '" class="regular-text" />';
-        echo '<p class="description">' . esc_html__('URL to redirect if payment is cancelled (leave empty for homepage)', 'unelmapay-woocommerce') . '</p>';
+        echo '<p class="description">' . esc_html__('URL to redirect if payment is cancelled (leave empty for homepage)', 'unelmapay-payment-gateway') . '</p>';
     }
     
     public function debug_mode_field() {
@@ -193,8 +193,8 @@ class UNELMAPAY_Core {
         $checked = isset($options['debug_mode']) && $options['debug_mode'] === 'yes' ? 'checked' : '';
         echo '<input type="hidden" name="unelmapay_settings[debug_mode]" value="no" />';
         echo '<label><input type="checkbox" name="unelmapay_settings[debug_mode]" value="yes" ' . $checked . ' /> ';
-        echo esc_html__('Enable Debug Logging', 'unelmapay-woocommerce') . '</label>';
-        echo '<p class="description">' . esc_html__('Log UnelmaPay events for troubleshooting', 'unelmapay-woocommerce') . '</p>';
+        echo esc_html__('Enable Debug Logging', 'unelmapay-payment-gateway') . '</label>';
+        echo '<p class="description">' . esc_html__('Log UnelmaPay events for troubleshooting', 'unelmapay-payment-gateway') . '</p>';
     }
     
     public function settings_page() {
@@ -203,8 +203,8 @@ class UNELMAPAY_Core {
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
             
             <h2 class="nav-tab-wrapper">
-                <a href="?page=unelmapay-settings" class="nav-tab nav-tab-active"><?php esc_html_e('Settings', 'unelmapay-woocommerce'); ?></a>
-                <a href="edit.php?post_type=unelmapay_payment" class="nav-tab"><?php esc_html_e('Payments', 'unelmapay-woocommerce'); ?></a>
+                <a href="?page=unelmapay-settings" class="nav-tab nav-tab-active"><?php esc_html_e('Settings', 'unelmapay-payment-gateway'); ?></a>
+                <a href="edit.php?post_type=unelmapay_payment" class="nav-tab"><?php esc_html_e('Payments', 'unelmapay-payment-gateway'); ?></a>
             </h2>
             
             <form method="post" action="options.php">
@@ -217,35 +217,35 @@ class UNELMAPAY_Core {
             
             <hr>
             
-            <h2><?php esc_html_e('Usage Instructions', 'unelmapay-woocommerce'); ?></h2>
+            <h2><?php esc_html_e('Usage Instructions', 'unelmapay-payment-gateway'); ?></h2>
             
             <?php if (class_exists('WooCommerce')): ?>
                 <div class="notice notice-success inline">
-                    <p><strong><?php esc_html_e('WooCommerce Mode Active', 'unelmapay-woocommerce'); ?></strong></p>
-                    <p><?php esc_html_e('UnelmaPay is available as a payment method in your WooCommerce checkout.', 'unelmapay-woocommerce'); ?></p>
+                    <p><strong><?php esc_html_e('WooCommerce Mode Active', 'unelmapay-payment-gateway'); ?></strong></p>
+                    <p><?php esc_html_e('UnelmaPay is available as a payment method in your WooCommerce checkout.', 'unelmapay-payment-gateway'); ?></p>
                 </div>
             <?php endif; ?>
             
-            <h3><?php esc_html_e('Shortcode Usage', 'unelmapay-woocommerce'); ?></h3>
-            <p><?php esc_html_e('Use the following shortcode to add a payment button anywhere on your site:', 'unelmapay-woocommerce'); ?></p>
+            <h3><?php esc_html_e('Shortcode Usage', 'unelmapay-payment-gateway'); ?></h3>
+            <p><?php esc_html_e('Use the following shortcode to add a payment button anywhere on your site:', 'unelmapay-payment-gateway'); ?></p>
             
             <pre style="background: #f5f5f5; padding: 15px; border-left: 4px solid #0073aa;">[unelmapay_button amount="100" title="Product Name" description="Product Description"]</pre>
             
-            <h4><?php esc_html_e('Shortcode Parameters:', 'unelmapay-woocommerce'); ?></h4>
+            <h4><?php esc_html_e('Shortcode Parameters:', 'unelmapay-payment-gateway'); ?></h4>
             <ul style="list-style: disc; margin-left: 20px;">
-                <li><code>amount</code> - <?php esc_html_e('Payment amount (required)', 'unelmapay-woocommerce'); ?></li>
-                <li><code>title</code> - <?php esc_html_e('Item name (required)', 'unelmapay-woocommerce'); ?></li>
-                <li><code>description</code> - <?php esc_html_e('Item description (optional)', 'unelmapay-woocommerce'); ?></li>
-                <li><code>button_text</code> - <?php esc_html_e('Button text (default: "Pay Now")', 'unelmapay-woocommerce'); ?></li>
+                <li><code>amount</code> - <?php esc_html_e('Payment amount (required)', 'unelmapay-payment-gateway'); ?></li>
+                <li><code>title</code> - <?php esc_html_e('Item name (required)', 'unelmapay-payment-gateway'); ?></li>
+                <li><code>description</code> - <?php esc_html_e('Item description (optional)', 'unelmapay-payment-gateway'); ?></li>
+                <li><code>button_text</code> - <?php esc_html_e('Button text (default: "Pay Now")', 'unelmapay-payment-gateway'); ?></li>
             </ul>
             
-            <h4><?php esc_html_e('Example:', 'unelmapay-woocommerce'); ?></h4>
+            <h4><?php esc_html_e('Example:', 'unelmapay-payment-gateway'); ?></h4>
             <pre style="background: #f5f5f5; padding: 15px; border-left: 4px solid #0073aa;">[unelmapay_button amount="250" title="Donation" description="Support our cause" button_text="Donate Now"]</pre>
             
-            <h3><?php esc_html_e('IPN Callback URL', 'unelmapay-woocommerce'); ?></h3>
-            <p><?php esc_html_e('Your IPN callback URL is:', 'unelmapay-woocommerce'); ?></p>
+            <h3><?php esc_html_e('IPN Callback URL', 'unelmapay-payment-gateway'); ?></h3>
+            <p><?php esc_html_e('Your IPN callback URL is:', 'unelmapay-payment-gateway'); ?></p>
             <pre style="background: #f5f5f5; padding: 15px; border-left: 4px solid #0073aa;"><?php echo esc_url(home_url('/?unelmapay_ipn=1')); ?></pre>
-            <p class="description"><?php esc_html_e('Make sure this URL is accessible from the internet for payment notifications to work.', 'unelmapay-woocommerce'); ?></p>
+            <p class="description"><?php esc_html_e('Make sure this URL is accessible from the internet for payment notifications to work.', 'unelmapay-payment-gateway'); ?></p>
         </div>
         <?php
     }
@@ -255,11 +255,11 @@ class UNELMAPAY_Core {
             'amount' => '',
             'title' => '',
             'description' => '',
-            'button_text' => __('Pay with UnelmaPay', 'unelmapay-woocommerce'),
+            'button_text' => __('Pay with UnelmaPay', 'unelmapay-payment-gateway'),
         ), $atts);
         
         if (empty($atts['amount']) || empty($atts['title'])) {
-            return '<p style="color: red;">' . esc_html__('Error: amount and title are required parameters.', 'unelmapay-woocommerce') . '</p>';
+            return '<p style="color: red;">' . esc_html__('Error: amount and title are required parameters.', 'unelmapay-payment-gateway') . '</p>';
         }
         
         $payment_url = $this->sandbox_mode === 'yes' ? 'https://dev.unelmapay.com/sci/form' : 'https://unelmapay.com.np/sci/form';
@@ -434,11 +434,11 @@ class UNELMAPAY_Core {
     public function set_custom_columns($columns) {
         $new_columns = array();
         $new_columns['cb'] = $columns['cb'];
-        $new_columns['title'] = __('Payment ID', 'unelmapay-woocommerce');
-        $new_columns['amount'] = __('Amount (NPR)', 'unelmapay-woocommerce');
-        $new_columns['status'] = __('Status', 'unelmapay-woocommerce');
-        $new_columns['transaction_id'] = __('Transaction ID', 'unelmapay-woocommerce');
-        $new_columns['date'] = __('Date', 'unelmapay-woocommerce');
+        $new_columns['title'] = __('Payment ID', 'unelmapay-payment-gateway');
+        $new_columns['amount'] = __('Amount (NPR)', 'unelmapay-payment-gateway');
+        $new_columns['status'] = __('Status', 'unelmapay-payment-gateway');
+        $new_columns['transaction_id'] = __('Transaction ID', 'unelmapay-payment-gateway');
+        $new_columns['date'] = __('Date', 'unelmapay-payment-gateway');
         return $new_columns;
     }
     
@@ -450,7 +450,7 @@ class UNELMAPAY_Core {
                 break;
             case 'status':
                 $status = get_post_meta($post_id, '_status', true);
-                $status_label = $status === 'completed' ? __('Completed', 'unelmapay-woocommerce') : __('Pending', 'unelmapay-woocommerce');
+                $status_label = $status === 'completed' ? __('Completed', 'unelmapay-payment-gateway') : __('Pending', 'unelmapay-payment-gateway');
                 $status_class = $status === 'completed' ? 'completed' : 'pending';
                 echo '<span class="unelmapay-status unelmapay-status-' . esc_attr($status_class) . '">' . esc_html($status_label) . '</span>';
                 break;
@@ -464,7 +464,7 @@ class UNELMAPAY_Core {
     public function add_payment_meta_boxes() {
         add_meta_box(
             'unelmapay_payment_details',
-            __('Payment Details', 'unelmapay-woocommerce'),
+            __('Payment Details', 'unelmapay-payment-gateway'),
             array($this, 'render_payment_details_meta_box'),
             'unelmapay_payment',
             'normal',
@@ -486,46 +486,46 @@ class UNELMAPAY_Core {
  
         <table class="unelmapay-details-table">
             <tr>
-                <th><?php esc_html_e('Payment ID', 'unelmapay-woocommerce'); ?></th>
+                <th><?php esc_html_e('Payment ID', 'unelmapay-payment-gateway'); ?></th>
                 <td><code><?php echo esc_html($payment_id); ?></code></td>
             </tr>
             <tr>
-                <th><?php esc_html_e('Item Name', 'unelmapay-woocommerce'); ?></th>
+                <th><?php esc_html_e('Item Name', 'unelmapay-payment-gateway'); ?></th>
                 <td><?php echo esc_html($title); ?></td>
             </tr>
             <tr>
-                <th><?php esc_html_e('Description', 'unelmapay-woocommerce'); ?></th>
+                <th><?php esc_html_e('Description', 'unelmapay-payment-gateway'); ?></th>
                 <td><?php echo esc_html($description ? $description : '-'); ?></td>
             </tr>
             <tr>
-                <th><?php esc_html_e('Amount', 'unelmapay-woocommerce'); ?></th>
+                <th><?php esc_html_e('Amount', 'unelmapay-payment-gateway'); ?></th>
                 <td><strong>NPR <?php echo esc_html($amount); ?></strong></td>
             </tr>
             <tr>
-                <th><?php esc_html_e('Status', 'unelmapay-woocommerce'); ?></th>
+                <th><?php esc_html_e('Status', 'unelmapay-payment-gateway'); ?></th>
                 <td>
                     <?php
-                    $status_label = $status === 'completed' ? __('Completed', 'unelmapay-woocommerce') : __('Pending', 'unelmapay-woocommerce');
+                    $status_label = $status === 'completed' ? __('Completed', 'unelmapay-payment-gateway') : __('Pending', 'unelmapay-payment-gateway');
                     $status_class = $status === 'completed' ? 'completed' : 'pending';
                     echo '<span class="unelmapay-status unelmapay-status-' . esc_attr($status_class) . '">' . esc_html($status_label) . '</span>';
                     ?>
                 </td>
             </tr>
             <tr>
-                <th><?php esc_html_e('Transaction ID', 'unelmapay-woocommerce'); ?></th>
+                <th><?php esc_html_e('Transaction ID', 'unelmapay-payment-gateway'); ?></th>
                 <td><?php echo $transaction_id ? '<code>' . esc_html($transaction_id) . '</code>' : '-'; ?></td>
             </tr>
             <tr>
-                <th><?php esc_html_e('Created At', 'unelmapay-woocommerce'); ?></th>
+                <th><?php esc_html_e('Created At', 'unelmapay-payment-gateway'); ?></th>
                 <td><?php echo esc_html($created_at); ?></td>
             </tr>
             <tr>
-                <th><?php esc_html_e('Completed At', 'unelmapay-woocommerce'); ?></th>
+                <th><?php esc_html_e('Completed At', 'unelmapay-payment-gateway'); ?></th>
                 <td><?php echo $completed_at ? esc_html($completed_at) : '-'; ?></td>
             </tr>
         </table>
         <p class="description" style="margin-top: 15px;">
-            <?php esc_html_e('All payments are processed in NPR (Nepalese Rupee), which is the base currency in UnelmaPay system.', 'unelmapay-woocommerce'); ?>
+            <?php esc_html_e('All payments are processed in NPR (Nepalese Rupee), which is the base currency in UnelmaPay system.', 'unelmapay-payment-gateway'); ?>
         </p>
         <?php
     }
@@ -536,7 +536,7 @@ class UNELMAPAY_Core {
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
             
             <div class="notice notice-info">
-                <p><?php esc_html_e('Debug logs are stored in your WordPress error log. Enable Debug Mode in settings to start logging.', 'unelmapay-woocommerce'); ?></p>
+                <p><?php esc_html_e('Debug logs are stored in your WordPress error log. Enable Debug Mode in settings to start logging.', 'unelmapay-payment-gateway'); ?></p>
             </div>
             
             <?php
@@ -553,7 +553,7 @@ class UNELMAPAY_Core {
                     $recent_logs = array_slice(array_reverse($unelmapay_logs), 0, 100);
                     ?>
                     <div style="background: #f5f5f5; padding: 15px; border: 1px solid #ddd; border-radius: 4px; max-height: 600px; overflow-y: auto;">
-                        <h3><?php esc_html_e('Recent UnelmaPay Logs (Last 100 entries)', 'unelmapay-woocommerce'); ?></h3>
+                        <h3><?php esc_html_e('Recent UnelmaPay Logs (Last 100 entries)', 'unelmapay-payment-gateway'); ?></h3>
                         <pre style="white-space: pre-wrap; word-wrap: break-word; font-size: 12px;"><?php echo esc_html(implode("\n", $recent_logs)); ?></pre>
                     </div>
                     
@@ -561,25 +561,25 @@ class UNELMAPAY_Core {
                         <a
                             href="<?php echo esc_url(admin_url('admin.php?page=unelmapay-logs&action=clear')); ?>"
                             class="button"
-                            onclick="return confirm('<?php echo esc_js(__('Are you sure you want to clear all UnelmaPay logs?', 'unelmapay-woocommerce')); ?>');"
+                            onclick="return confirm('<?php echo esc_js(__('Are you sure you want to clear all UnelmaPay logs?', 'unelmapay-payment-gateway')); ?>');"
                         >
-                            <?php esc_html_e('Clear UnelmaPay Logs', 'unelmapay-woocommerce'); ?>
+                            <?php esc_html_e('Clear UnelmaPay Logs', 'unelmapay-payment-gateway'); ?>
                         </a>
 
                         <a
                             href="<?php echo esc_url(admin_url('admin.php?page=unelmapay-logs&action=download')); ?>"
                             class="button"
                         >
-                            <?php esc_html_e('Download Logs', 'unelmapay-woocommerce'); ?>
+                            <?php esc_html_e('Download Logs', 'unelmapay-payment-gateway'); ?>
                         </a>
                     </p>
                     <?php
                 } else {
-                    echo '<div class="notice notice-warning"><p>' . esc_html__('No UnelmaPay logs found. Make sure Debug Mode is enabled in settings.', 'unelmapay-woocommerce') . '</p></div>';
+                    echo '<div class="notice notice-warning"><p>' . esc_html__('No UnelmaPay logs found. Make sure Debug Mode is enabled in settings.', 'unelmapay-payment-gateway') . '</p></div>';
                 }
             } else {
-                echo '<div class="notice notice-error"><p>' . esc_html__('Debug log file not found. Make sure WP_DEBUG_LOG is enabled in wp-config.php.', 'unelmapay-woocommerce') . '</p></div>';
-                echo '<p>' . esc_html__('Add the following to your wp-config.php:', 'unelmapay-woocommerce') . '</p>';
+                echo '<div class="notice notice-error"><p>' . esc_html__('Debug log file not found. Make sure WP_DEBUG_LOG is enabled in wp-config.php.', 'unelmapay-payment-gateway') . '</p></div>';
+                echo '<p>' . esc_html__('Add the following to your wp-config.php:', 'unelmapay-payment-gateway') . '</p>';
                 echo '<pre style="background: #f5f5f5; padding: 10px;">define(\'WP_DEBUG\', true);<br>define(\'WP_DEBUG_LOG\', true);<br>define(\'WP_DEBUG_DISPLAY\', false);</pre>';
             }
             
@@ -591,7 +591,7 @@ class UNELMAPAY_Core {
                         return strpos($line, '[UnelmaPay]') === false;
                     });
                     file_put_contents($log_file, implode("\n", $filtered_logs));
-                    echo '<div class="notice notice-success"><p>' . esc_html__('UnelmaPay logs cleared successfully.', 'unelmapay-woocommerce') . '</p></div>';
+                    echo '<div class="notice notice-success"><p>' . esc_html__('UnelmaPay logs cleared successfully.', 'unelmapay-payment-gateway') . '</p></div>';
                 }
                 
                 if ($_GET['action'] === 'download' && file_exists($log_file)) {
@@ -609,19 +609,19 @@ class UNELMAPAY_Core {
             }
             ?>
             
-            <h3 style="margin-top: 30px;"><?php esc_html_e('What Gets Logged?', 'unelmapay-woocommerce'); ?></h3>
+            <h3 style="margin-top: 30px;"><?php esc_html_e('What Gets Logged?', 'unelmapay-payment-gateway'); ?></h3>
             <ul style="list-style: disc; margin-left: 20px;">
-                <li><?php esc_html_e('Payment form generation', 'unelmapay-woocommerce'); ?></li>
-                <li><?php esc_html_e('IPN callback requests', 'unelmapay-woocommerce'); ?></li>
-                <li><?php esc_html_e('Hash verification results', 'unelmapay-woocommerce'); ?></li>
-                <li><?php esc_html_e('Payment status updates', 'unelmapay-woocommerce'); ?></li>
-                <li><?php esc_html_e('Error messages and warnings', 'unelmapay-woocommerce'); ?></li>
+                <li><?php esc_html_e('Payment form generation', 'unelmapay-payment-gateway'); ?></li>
+                <li><?php esc_html_e('IPN callback requests', 'unelmapay-payment-gateway'); ?></li>
+                <li><?php esc_html_e('Hash verification results', 'unelmapay-payment-gateway'); ?></li>
+                <li><?php esc_html_e('Payment status updates', 'unelmapay-payment-gateway'); ?></li>
+                <li><?php esc_html_e('Error messages and warnings', 'unelmapay-payment-gateway'); ?></li>
             </ul>
             
-            <h3 style="margin-top: 20px;"><?php esc_html_e('Currency Information', 'unelmapay-woocommerce'); ?></h3>
+            <h3 style="margin-top: 20px;"><?php esc_html_e('Currency Information', 'unelmapay-payment-gateway'); ?></h3>
             <div class="notice notice-info inline">
-                <p><strong><?php esc_html_e('All payments are processed in NPR (Nepalese Rupee)', 'unelmapay-woocommerce'); ?></strong></p>
-                <p><?php esc_html_e('NPR is the base currency in the UnelmaPay system. All amounts are automatically converted to NPR during payment processing.', 'unelmapay-woocommerce'); ?></p>
+                <p><strong><?php esc_html_e('All payments are processed in NPR (Nepalese Rupee)', 'unelmapay-payment-gateway'); ?></strong></p>
+                <p><?php esc_html_e('NPR is the base currency in the UnelmaPay system. All amounts are automatically converted to NPR during payment processing.', 'unelmapay-payment-gateway'); ?></p>
             </div>
         </div>
         <?php
