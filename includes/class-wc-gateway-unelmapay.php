@@ -313,7 +313,6 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         }
     }
 
-    add_action('wp_enqueue_scripts', array($this, 'enqueue_checkout_script'));
     public function enqueue_checkout_script() {
         if (is_checkout()) {
             wp_enqueue_script(
