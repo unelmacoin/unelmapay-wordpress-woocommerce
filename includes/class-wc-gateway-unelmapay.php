@@ -32,6 +32,8 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
         add_action('woocommerce_api_wc_gateway_unelmapay', array($this, 'handle_ipn'));
+
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_checkout_script'));
     }
 
     public function init_form_fields() {
