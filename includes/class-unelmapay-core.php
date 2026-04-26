@@ -644,8 +644,6 @@ wp_localize_script('unelmapay-redirect', 'upay_redirect_url', admin_url('admin.p
 
 wp_register_script('unelmapay-inline', false);
 wp_enqueue_script('unelmapay-inline');
-$redirect_url = admin_url('admin.php?page=unelmapay-logs');
-wp_add_inline_script('unelmapay-inline', 'setTimeout(function(){ window.location.href = "' . esc_js($redirect_url) . '"; }, 2000);');
 add_action('admin_enqueue_scripts', function($hook) {
     if (isset($_GET['page']) && strpos($_GET['page'], 'unelmapay') !== false) {
         wp_enqueue_style(
