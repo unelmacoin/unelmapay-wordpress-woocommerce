@@ -46,6 +46,7 @@ class UNELMAPAY_Core {
         add_filter('manage_unelmapay_payment_posts_columns', array($this, 'set_custom_columns'));
         add_action('manage_unelmapay_payment_posts_custom_column', array($this, 'custom_column_content'), 10, 2);
         add_action('add_meta_boxes', array($this, 'add_payment_meta_boxes'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
     }
     
     public function register_post_type() {
@@ -633,18 +634,7 @@ class UNELMAPAY_Core {
     }
 }
 
-wp_enqueue_script(
-    'unelmapay-redirect',
-    plugins_url('../assets/js/unelmapay-redirect.js', __FILE__),
-    array(),
-    '1.0.0',
-    true
-);
-wp_localize_script('unelmapay-redirect', 'upay_redirect_url', admin_url('admin.php?page=unelmapay-logs'));
-
-wp_register_script('unelmapay-inline', false);
-wp_enqueue_script('unelmapay-inline');
-add_action('admin_enqueue_scripts', function($hook) {
+public function enqueue_admin_assets($hook) {
     if (isset($_GET['page']) && strpos($_GET['page'], 'unelmapay') !== false) {
         wp_enqueue_style(
             'unelmapay-admin',
@@ -653,4 +643,4 @@ add_action('admin_enqueue_scripts', function($hook) {
             '1.0.0'
         );
     }
-});
+}
