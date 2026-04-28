@@ -1,8 +1,8 @@
 === UnelmaPay Payment Gateway ===
 Contributors: unelmaplatforms
-Tags: woocommerce, payment gateway, unelmapay, nepal, payment, ecommerce, donations, shortcode
+Tags: woocommerce, payment gateway, unelmapay, nepal, ecommerce
 Requires at least: 5.2
-Tested up to: 6.4
+Tested up to: 6.9
 Requires PHP: 7.2
 Stable tag: 2.0.1
 License: GPLv2 or later

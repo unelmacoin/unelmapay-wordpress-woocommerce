@@ -207,14 +207,12 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
     }
 
     public function handle_ipn() {
-        $request_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN';
+        $request_method = isset($_SERVER['REQUEST_METHOD']) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'UNKNOWN';
 
-        @file_put_contents(
-            WP_CONTENT_DIR . '/unelmapay-ipn-debug.log',
-            '[' . date('Y-m-d H:i:s') . '] IPN endpoint hit. Method=' . $request_method .
-            ' IP=' . (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'unknown') . "\n",
-            FILE_APPEND
-        );
+        // Logging to file removed for production compliance.
+        $remote_addr = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown';
+        // [' . gmdate('Y-m-d H:i:s') . '] IPN endpoint hit. Method=' . $request_method . ' IP=' . $remote_addr
+
 
         if ($request_method === 'GET') {
             $this->log('IPN health-check ping received (GET)');
@@ -231,24 +229,25 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             exit;
         }
 
+        // Note: Nonce verification is not possible for IPN callbacks from external payment systems.
+
         $this->log('=== IPN HANDLER ENTERED ===');
 
-        $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : (isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : 'not set');
+        $content_type = isset($_SERVER['CONTENT_TYPE']) ? sanitize_text_field( wp_unslash( $_SERVER['CONTENT_TYPE'] ) ) : (isset($_SERVER['HTTP_CONTENT_TYPE']) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_CONTENT_TYPE'] ) ) : 'not set');
         $raw_body = file_get_contents('php://input');
 
         $headers = array();
         foreach ($_SERVER as $key => $value) {
             if (strpos($key, 'HTTP_') === 0) {
-                $headers[substr($key, 5)] = $value;
+                $headers[substr($key, 5)] = sanitize_text_field( wp_unslash( $value ) );
             }
         }
 
         $this->log('IPN Request method: ' . $request_method);
         $this->log('IPN Content-Type: ' . $content_type);
-        $this->log('IPN Headers: ' . print_r($headers, true));
-        $this->log('IPN Raw body (' . strlen($raw_body) . ' bytes): ' . $raw_body);
-        $this->log('IPN $_POST: ' . print_r($_POST, true));
-        $this->log('IPN $_GET: ' . print_r($_GET, true));
+        // Debug code removed: print_r($headers), print_r($_POST), print_r($_GET)
+        $this->log('IPN Raw body (' . strlen($raw_body) . ' bytes)');
+
 
         $post_data = $_POST;
 
@@ -275,14 +274,14 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             wp_die('UnelmaPay IPN Request Failure', 'UnelmaPay IPN', array('response' => 400));
         }
 
-        $total = isset($post_data['total']) ? sanitize_text_field($post_data['total']) : '';
-        $date = isset($post_data['date']) ? sanitize_text_field($post_data['date']) : '';
-        $id_transfer = isset($post_data['id_transfer']) ? sanitize_text_field($post_data['id_transfer']) : '';
-        $received_hash = isset($post_data['hash']) ? sanitize_text_field($post_data['hash']) : '';
-        $custom = isset($post_data['custom']) ? sanitize_text_field($post_data['custom']) : '';
-        $item_name = isset($post_data['item_name']) ? sanitize_text_field($post_data['item_name']) : '';
-        $currency = isset($post_data['currency']) ? sanitize_text_field($post_data['currency']) : '';
-        $status = isset($post_data['status']) ? sanitize_text_field($post_data['status']) : '';
+        $total = isset($post_data['total']) ? sanitize_text_field( wp_unslash( $post_data['total'] ) ) : '';
+        $date = isset($post_data['date']) ? sanitize_text_field( wp_unslash( $post_data['date'] ) ) : '';
+        $id_transfer = isset($post_data['id_transfer']) ? sanitize_text_field( wp_unslash( $post_data['id_transfer'] ) ) : '';
+        $received_hash = isset($post_data['hash']) ? sanitize_text_field( wp_unslash( $post_data['hash'] ) ) : '';
+        $custom = isset($post_data['custom']) ? sanitize_text_field( wp_unslash( $post_data['custom'] ) ) : '';
+        $item_name = isset($post_data['item_name']) ? sanitize_text_field( wp_unslash( $post_data['item_name'] ) ) : '';
+        $currency = isset($post_data['currency']) ? sanitize_text_field( wp_unslash( $post_data['currency'] ) ) : '';
+        $status = isset($post_data['status']) ? sanitize_text_field( wp_unslash( $post_data['status'] ) ) : '';
 
         $hash_string = $total . ':' . $this->merchant_password . ':' . $date . ':' . $id_transfer;
         $calculated_hash = strtoupper(md5($hash_string));
@@ -308,7 +307,8 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         }
 
         $order->add_order_note(sprintf(
-            __('UnelmaPay payment completed. Transaction ID: %s, Amount: %s', 'unelmapay-payment-gateway'),
+            // translators: %1$s is the transaction ID, %2$s is the amount.
+            __('UnelmaPay payment completed. Transaction ID: %1$s, Amount: %2$s', 'unelmapay-payment-gateway'),
             $id_transfer,
             $total
         ));
