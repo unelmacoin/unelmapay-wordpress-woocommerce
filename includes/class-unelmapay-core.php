@@ -665,34 +665,30 @@ class UNELMAPAY_Core
             );
         }
     }
-}
-
-public function sanitize_settings( $input ) {
-    $input = wp_unslash( (array) $input );
-
-    $defaults = array(
-        'merchant_id'       => '',
-        'merchant_password' => '',
-        'merchant_name'     => '',
-        'merchant_email'    => '',
-        'success_url'       => '',
-        'fail_url'          => '',
-        'cancel_url'        => '',
-        'sandbox_mode'      => 'no',
-        'debug_mode'        => 'no',
-    );
-
-    $input = wp_parse_args( $input, $defaults );
-
-    return array(
-        'merchant_id'       => sanitize_text_field( $input['merchant_id'] ),
-        'merchant_password' => sanitize_text_field( $input['merchant_password'] ),
-        'merchant_name'     => sanitize_text_field( $input['merchant_name'] ),
-        'merchant_email'    => sanitize_email( $input['merchant_email'] ),
-        'success_url'       => esc_url_raw( $input['success_url'] ),
-        'fail_url'          => esc_url_raw( $input['fail_url'] ),
-        'cancel_url'        => esc_url_raw( $input['cancel_url'] ),
-        'sandbox_mode'      => ( $input['sandbox_mode'] === 'yes' ) ? 'yes' : 'no',
-        'debug_mode'        => ( $input['debug_mode'] === 'yes' ) ? 'yes' : 'no',
-    );
+    public function sanitize_settings( $input ) {
+        $input = wp_unslash( (array) $input );
+        $defaults = array(
+            'merchant_id'       => '',
+            'merchant_password' => '',
+            'merchant_name'     => '',
+            'merchant_email'    => '',
+            'success_url'       => '',
+            'fail_url'          => '',
+            'cancel_url'        => '',
+            'sandbox_mode'      => 'no',
+            'debug_mode'        => 'no',
+        );
+        $input = wp_parse_args( $input, $defaults );
+        return array(
+            'merchant_id'       => sanitize_text_field( $input['merchant_id'] ),
+            'merchant_password' => sanitize_text_field( $input['merchant_password'] ),
+            'merchant_name'     => sanitize_text_field( $input['merchant_name'] ),
+            'merchant_email'    => sanitize_email( $input['merchant_email'] ),
+            'success_url'       => esc_url_raw( $input['success_url'] ),
+            'fail_url'          => esc_url_raw( $input['fail_url'] ),
+            'cancel_url'        => esc_url_raw( $input['cancel_url'] ),
+            'sandbox_mode'      => ( $input['sandbox_mode'] === 'yes' ) ? 'yes' : 'no',
+            'debug_mode'        => ( $input['debug_mode'] === 'yes' ) ? 'yes' : 'no',
+        );
+    }
 }
