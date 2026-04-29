@@ -3,10 +3,10 @@
  * Plugin Name: UnelmaPay Payment Gateway
  * Plugin URI: https://unelmapay.com/
  * Description: Accept payments via UnelmaPay. Works standalone or with WooCommerce. Supports sandbox and production environments.
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: UnelmaPay
  * Author URI: https://unelmapay.com/
- * Text Domain: unelmapay-woocommerce
+ * Text Domain: unelmapay-payment-gateway
  * Domain Path: /languages
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('UNELMAPAY_VERSION', '2.0.0');
+define('UNELMAPAY_VERSION', '2.0.1');
 define('UNELMAPAY_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('UNELMAPAY_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -37,7 +37,7 @@ function unelmapay_init() {
         });
     }
     
-    UnelmaPay_Core::instance();
+    UNELMAPAY_Core::instance();
 }
 
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function($links) {

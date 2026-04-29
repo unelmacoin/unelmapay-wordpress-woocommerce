@@ -1,0 +1,6 @@
+.unelmapay-details-table { width: 100%; border-collapse: collapse; }
+.unelmapay-details-table th { text-align: left; padding: 10px; background: #f5f5f5; width: 30%; }
+.unelmapay-details-table td { padding: 10px; border-bottom: 1px solid #ddd; }
+.unelmapay-status { padding: 5px 10px; border-radius: 3px; font-weight: bold; }
+.unelmapay-status-completed { background: #d4edda; color: #155724; }
+.unelmapay-status-pending { background: #fff3cd; color: #856404; }

@@ -508,8 +508,8 @@ unelmapay-wordpress-woocommerce/
 │   ├── class-unelmapay-core.php   # Standalone mode logic
 │   └── class-wc-gateway-unelmapay.php  # WooCommerce integration
 ├── languages/
-│   └── unelmapay-woocommerce.pot  # Translation template
-├── unelmapay-woocommerce.php      # Main plugin file
+│   └── unelmapay-payment-gateway.pot  # Translation template
+├── unelmapay-payment-gateway.php      # Main plugin file
 ├── uninstall.php                  # Cleanup on uninstall
 ├── README.md                      # This file
 ├── CONFIGURATION_GUIDE.md         # Detailed config guide

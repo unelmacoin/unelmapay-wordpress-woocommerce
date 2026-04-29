@@ -9,8 +9,8 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $this->id                 = 'unelmapay';
         $this->icon               = '';
         $this->has_fields         = false;
-        $this->method_title       = __('UnelmaPay', 'unelmapay-woocommerce');
-        $this->method_description = __('Accept payments via UnelmaPay payment gateway. Supports sandbox and production environments.', 'unelmapay-woocommerce');
+        $this->method_title       = __('UnelmaPay', 'unelmapay-payment-gateway');
+        $this->method_description = __('Accept payments via UnelmaPay payment gateway. Supports sandbox and production environments.', 'unelmapay-payment-gateway');
         $this->supports           = array('products');
 
         $this->init_form_fields();
@@ -32,94 +32,96 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
         add_action('woocommerce_api_wc_gateway_unelmapay', array($this, 'handle_ipn'));
+
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_checkout_script'));
     }
 
     public function init_form_fields() {
         $this->form_fields = array(
             'enabled' => array(
-                'title'   => __('Enable/Disable', 'unelmapay-woocommerce'),
+                'title'   => __('Enable/Disable', 'unelmapay-payment-gateway'),
                 'type'    => 'checkbox',
-                'label'   => __('Enable UnelmaPay Payment Gateway', 'unelmapay-woocommerce'),
+                'label'   => __('Enable UnelmaPay Payment Gateway', 'unelmapay-payment-gateway'),
                 'default' => 'no'
             ),
             'title' => array(
-                'title'       => __('Title', 'unelmapay-woocommerce'),
+                'title'       => __('Title', 'unelmapay-payment-gateway'),
                 'type'        => 'text',
-                'description' => __('This controls the title which the user sees during checkout.', 'unelmapay-woocommerce'),
-                'default'     => __('UnelmaPay', 'unelmapay-woocommerce'),
+                'description' => __('This controls the title which the user sees during checkout.', 'unelmapay-payment-gateway'),
+                'default'     => __('UnelmaPay', 'unelmapay-payment-gateway'),
                 'desc_tip'    => true,
             ),
             'description' => array(
-                'title'       => __('Description', 'unelmapay-woocommerce'),
+                'title'       => __('Description', 'unelmapay-payment-gateway'),
                 'type'        => 'textarea',
-                'description' => __('This controls the description which the user sees during checkout.', 'unelmapay-woocommerce'),
-                'default'     => __('Pay securely via UnelmaPay.', 'unelmapay-woocommerce'),
+                'description' => __('This controls the description which the user sees during checkout.', 'unelmapay-payment-gateway'),
+                'default'     => __('Pay securely via UnelmaPay.', 'unelmapay-payment-gateway'),
             ),
             'merchant_id' => array(
-                'title'       => __('Merchant ID', 'unelmapay-woocommerce'),
+                'title'       => __('Merchant ID', 'unelmapay-payment-gateway'),
                 'type'        => 'text',
-                'description' => __('Enter your UnelmaPay Merchant ID.', 'unelmapay-woocommerce'),
+                'description' => __('Enter your UnelmaPay Merchant ID.', 'unelmapay-payment-gateway'),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
             'merchant_password' => array(
-                'title'       => __('Merchant Password', 'unelmapay-woocommerce'),
+                'title'       => __('Merchant Password', 'unelmapay-payment-gateway'),
                 'type'        => 'password',
-                'description' => __('Enter your UnelmaPay Merchant Password (used for IPN verification).', 'unelmapay-woocommerce'),
+                'description' => __('Enter your UnelmaPay Merchant Password (used for IPN verification).', 'unelmapay-payment-gateway'),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
             'merchant_name' => array(
-                'title'       => __('Merchant Name', 'unelmapay-woocommerce'),
+                'title'       => __('Merchant Name', 'unelmapay-payment-gateway'),
                 'type'        => 'text',
-                'description' => __('Your business/merchant name (optional).', 'unelmapay-woocommerce'),
+                'description' => __('Your business/merchant name (optional).', 'unelmapay-payment-gateway'),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
             'merchant_email' => array(
-                'title'       => __('Merchant Email', 'unelmapay-woocommerce'),
+                'title'       => __('Merchant Email', 'unelmapay-payment-gateway'),
                 'type'        => 'email',
-                'description' => __('Your merchant contact email (optional).', 'unelmapay-woocommerce'),
+                'description' => __('Your merchant contact email (optional).', 'unelmapay-payment-gateway'),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
             'success_url' => array(
-                'title'       => __('Success URL', 'unelmapay-woocommerce'),
+                'title'       => __('Success URL', 'unelmapay-payment-gateway'),
                 'type'        => 'text',
-                'description' => __('Custom URL to redirect after successful payment (leave empty for default order received page).', 'unelmapay-woocommerce'),
+                'description' => __('Custom URL to redirect after successful payment (leave empty for default order received page).', 'unelmapay-payment-gateway'),
                 'default'     => '',
                 'desc_tip'    => true,
                 'placeholder' => home_url('/payment-success/'),
             ),
             'fail_url' => array(
-                'title'       => __('Fail URL', 'unelmapay-woocommerce'),
+                'title'       => __('Fail URL', 'unelmapay-payment-gateway'),
                 'type'        => 'text',
-                'description' => __('Custom URL to redirect after failed payment (leave empty for default checkout page).', 'unelmapay-woocommerce'),
+                'description' => __('Custom URL to redirect after failed payment (leave empty for default checkout page).', 'unelmapay-payment-gateway'),
                 'default'     => '',
                 'desc_tip'    => true,
                 'placeholder' => home_url('/payment-failed/'),
             ),
             'cancel_url' => array(
-                'title'       => __('Cancel URL', 'unelmapay-woocommerce'),
+                'title'       => __('Cancel URL', 'unelmapay-payment-gateway'),
                 'type'        => 'text',
-                'description' => __('Custom URL to redirect if payment is cancelled (leave empty for default cart page).', 'unelmapay-woocommerce'),
+                'description' => __('Custom URL to redirect if payment is cancelled (leave empty for default cart page).', 'unelmapay-payment-gateway'),
                 'default'     => '',
                 'desc_tip'    => true,
                 'placeholder' => home_url('/payment-cancelled/'),
             ),
             'sandbox_mode' => array(
-                'title'       => __('Sandbox Mode', 'unelmapay-woocommerce'),
+                'title'       => __('Sandbox Mode', 'unelmapay-payment-gateway'),
                 'type'        => 'checkbox',
-                'label'       => __('Enable Sandbox Mode (dev.unelmapay.com)', 'unelmapay-woocommerce'),
+                'label'       => __('Enable Sandbox Mode (dev.unelmapay.com)', 'unelmapay-payment-gateway'),
                 'default'     => 'yes',
-                'description' => __('Use sandbox environment for testing. Uncheck for production.', 'unelmapay-woocommerce'),
+                'description' => __('Use sandbox environment for testing. Uncheck for production.', 'unelmapay-payment-gateway'),
             ),
             'debug_mode' => array(
-                'title'       => __('Debug Mode', 'unelmapay-woocommerce'),
+                'title'       => __('Debug Mode', 'unelmapay-payment-gateway'),
                 'type'        => 'checkbox',
-                'label'       => __('Enable Debug Logging', 'unelmapay-woocommerce'),
+                'label'       => __('Enable Debug Logging', 'unelmapay-payment-gateway'),
                 'default'     => 'yes',
-                'description' => sprintf(__('Log UnelmaPay events inside %s', 'unelmapay-woocommerce'), '<code>' . WC_Log_Handler_File::get_log_file_path('unelmapay') . '</code>'),
+                'description' => sprintf(__('Log UnelmaPay events inside %s', 'unelmapay-payment-gateway'), '<code>' . WC_Log_Handler_File::get_log_file_path('unelmapay') . '</code>'),
             ),
         );
     }
@@ -137,16 +139,37 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
 
     public function receipt_page($order_id) {
         $order = wc_get_order($order_id);
-        
-        echo '<p>' . __('Thank you for your order. Please click the button below to pay with UnelmaPay.', 'unelmapay-woocommerce') . '</p>';
-        echo $this->generate_payment_form($order);
+
+        $redirect_url = $this->get_return_url($order); 
+        $checkout_message = __('Redirecting to UnelmaPay...', 'unelmapay-payment-gateway');
+
+        echo '<p>' . esc_html__('Thank you for your order. Please click the button below to pay with UnelmaPay.', 'unelmapay-payment-gateway') . '</p>';
+
+        $payment_form_html = $this->generate_payment_form($order);
+        echo wp_kses($payment_form_html, $this->get_receipt_allowed_html());
+
+        ?>
+        <script>
+        var upay_vars = {
+            redirect_url: <?php echo json_encode($redirect_url); ?>,
+            checkout_message: <?php echo json_encode($checkout_message); ?>
+        };
+        </script>
+        <?php
+        wp_enqueue_script(
+            'unelmapay-checkout',
+            plugins_url('../assets/js/unelmapay-checkout.js', __FILE__),
+            array('jquery'),
+            '1.0.0',
+            true
+        );
     }
 
     protected function generate_payment_form($order) {
         $order_id = $order->get_id();
         $amount = $order->get_total();
         $currency = 'debit_base';
-        
+
         $item_names = array();
         foreach ($order->get_items() as $item) {
             $item_names[] = $item->get_name();
@@ -176,52 +199,26 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         
         $logo_svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="32" height="32" style="vertical-align: middle; margin-right: 8px;"><circle cx="100" cy="100" r="100" fill="white"/><text x="100" y="85" font-family="Arial, sans-serif" font-size="70" font-weight="bold" fill="#7B4397" text-anchor="middle">U</text><text x="100" y="145" font-family="Arial, sans-serif" font-size="35" font-weight="bold" fill="#7B4397" text-anchor="middle">PAY</text></svg>';
         
-        $form_html .= '<button type="submit" class="button alt" id="submit_unelmapay_payment_form">' . $logo_svg . __('Pay with UnelmaPay', 'unelmapay-woocommerce') . '</button>';
-        $form_html .= '<a class="button cancel" href="' . esc_url($cancel_url) . '">' . __('Cancel order &amp; restore cart', 'unelmapay-woocommerce') . '</a>';
+        $form_html .= '<button type="submit" class="button alt" id="submit_unelmapay_payment_form">' . $logo_svg . __('Pay with UnelmaPay', 'unelmapay-payment-gateway') . '</button>';
+        $form_html .= '<a class="button cancel" href="' . esc_url($cancel_url) . '">' . __('Cancel order &amp; restore cart', 'unelmapay-payment-gateway') . '</a>';
         $form_html .= '</form>';
-
-        $form_html .= '<script type="text/javascript">
-            jQuery(function($){
-                $("body").block({
-                    message: "' . esc_js(__('Thank you for your order. We are now redirecting you to UnelmaPay to make payment.', 'unelmapay-woocommerce')) . '",
-                    baseZ: 99999,
-                    overlayCSS: {
-                        background: "#fff",
-                        opacity: 0.6
-                    },
-                    css: {
-                        padding:        "20px",
-                        zindex:         "9999999",
-                        textAlign:      "center",
-                        color:          "#555",
-                        border:         "3px solid #aaa",
-                        backgroundColor:"#fff",
-                        cursor:         "wait",
-                        lineHeight:     "24px",
-                    }
-                });
-                $("#submit_unelmapay_payment_form").click();
-            });
-        </script>';
 
         return $form_html;
     }
 
     public function handle_ipn() {
-        $request_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN';
+        $request_method = isset($_SERVER['REQUEST_METHOD']) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'UNKNOWN';
 
-        @file_put_contents(
-            WP_CONTENT_DIR . '/unelmapay-ipn-debug.log',
-            '[' . date('Y-m-d H:i:s') . '] IPN endpoint hit. Method=' . $request_method .
-            ' IP=' . (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'unknown') . "\n",
-            FILE_APPEND
-        );
+        // Logging to file removed for production compliance.
+        $remote_addr = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown';
+        // [' . gmdate('Y-m-d H:i:s') . '] IPN endpoint hit. Method=' . $request_method . ' IP=' . $remote_addr
+
 
         if ($request_method === 'GET') {
             $this->log('IPN health-check ping received (GET)');
             status_header(200);
             header('Content-Type: application/json');
-            echo json_encode(array(
+            wp_send_json(array(
                 'status'    => 'ok',
                 'gateway'   => 'UnelmaPay',
                 'endpoint'  => 'IPN',
@@ -232,24 +229,25 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             exit;
         }
 
+        // Note: Nonce verification is not possible for IPN callbacks from external payment systems.
+
         $this->log('=== IPN HANDLER ENTERED ===');
 
-        $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : (isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : 'not set');
+        $content_type = isset($_SERVER['CONTENT_TYPE']) ? sanitize_text_field( wp_unslash( $_SERVER['CONTENT_TYPE'] ) ) : (isset($_SERVER['HTTP_CONTENT_TYPE']) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_CONTENT_TYPE'] ) ) : 'not set');
         $raw_body = file_get_contents('php://input');
 
         $headers = array();
         foreach ($_SERVER as $key => $value) {
             if (strpos($key, 'HTTP_') === 0) {
-                $headers[substr($key, 5)] = $value;
+                $headers[substr($key, 5)] = sanitize_text_field( wp_unslash( $value ) );
             }
         }
 
         $this->log('IPN Request method: ' . $request_method);
         $this->log('IPN Content-Type: ' . $content_type);
-        $this->log('IPN Headers: ' . print_r($headers, true));
-        $this->log('IPN Raw body (' . strlen($raw_body) . ' bytes): ' . $raw_body);
-        $this->log('IPN $_POST: ' . print_r($_POST, true));
-        $this->log('IPN $_GET: ' . print_r($_GET, true));
+        // Debug code removed: print_r($headers), print_r($_POST), print_r($_GET)
+        $this->log('IPN Raw body (' . strlen($raw_body) . ' bytes)');
+
 
         $post_data = $_POST;
 
@@ -276,14 +274,14 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             wp_die('UnelmaPay IPN Request Failure', 'UnelmaPay IPN', array('response' => 400));
         }
 
-        $total = isset($post_data['total']) ? sanitize_text_field($post_data['total']) : '';
-        $date = isset($post_data['date']) ? sanitize_text_field($post_data['date']) : '';
-        $id_transfer = isset($post_data['id_transfer']) ? sanitize_text_field($post_data['id_transfer']) : '';
-        $received_hash = isset($post_data['hash']) ? sanitize_text_field($post_data['hash']) : '';
-        $custom = isset($post_data['custom']) ? sanitize_text_field($post_data['custom']) : '';
-        $item_name = isset($post_data['item_name']) ? sanitize_text_field($post_data['item_name']) : '';
-        $currency = isset($post_data['currency']) ? sanitize_text_field($post_data['currency']) : '';
-        $status = isset($post_data['status']) ? sanitize_text_field($post_data['status']) : '';
+        $total = isset($post_data['total']) ? sanitize_text_field( wp_unslash( $post_data['total'] ) ) : '';
+        $date = isset($post_data['date']) ? sanitize_text_field( wp_unslash( $post_data['date'] ) ) : '';
+        $id_transfer = isset($post_data['id_transfer']) ? sanitize_text_field( wp_unslash( $post_data['id_transfer'] ) ) : '';
+        $received_hash = isset($post_data['hash']) ? sanitize_text_field( wp_unslash( $post_data['hash'] ) ) : '';
+        $custom = isset($post_data['custom']) ? sanitize_text_field( wp_unslash( $post_data['custom'] ) ) : '';
+        $item_name = isset($post_data['item_name']) ? sanitize_text_field( wp_unslash( $post_data['item_name'] ) ) : '';
+        $currency = isset($post_data['currency']) ? sanitize_text_field( wp_unslash( $post_data['currency'] ) ) : '';
+        $status = isset($post_data['status']) ? sanitize_text_field( wp_unslash( $post_data['status'] ) ) : '';
 
         $hash_string = $total . ':' . $this->merchant_password . ':' . $date . ':' . $id_transfer;
         $calculated_hash = strtoupper(md5($hash_string));
@@ -308,8 +306,9 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             wp_die('IPN Received', 'UnelmaPay IPN', array('response' => 200));
         }
 
+        // translators: %1$s is the transaction ID, %2$s is the amount.
         $order->add_order_note(sprintf(
-            __('UnelmaPay payment completed. Transaction ID: %s, Amount: %s', 'unelmapay-woocommerce'),
+            __('UnelmaPay payment completed. Transaction ID: %1$s, Amount: %2$s', 'unelmapay-payment-gateway'),
             $id_transfer,
             $total
         ));
@@ -319,7 +318,7 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
         $this->log('IPN Success: Order #' . $order_id . ' marked as paid. Transaction ID: ' . $id_transfer);
 
         status_header(200);
-        echo 'IPN Received and Verified';
+        echo esc_html__('IPN Received and Verified', 'unelmapay-payment-gateway');
         exit;
     }
 
@@ -331,5 +330,67 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             $logger = wc_get_logger();
             $logger->info($message, array('source' => 'unelmapay'));
         }
+    }
+
+    public function enqueue_checkout_script() {
+        if (is_checkout()) {
+            wp_enqueue_script(
+                'unelmapay-checkout',
+                plugins_url('../assets/js/unelmapay-checkout.js', __FILE__),
+                array('jquery'),
+                '1.0.0',
+                true
+            );
+            wp_localize_script('unelmapay-checkout', 'upay_vars', array(
+                'redirect_url' => $redirect_url,
+                'checkout_message' => $checkout_message,
+            ));
+        }
+    }
+
+    protected function get_receipt_allowed_html() {
+        return array(
+            'form' => array(
+                'method' => true,
+                'action' => true,
+                'id' => true,
+            ),
+            'input' => array(
+                'type' => true,
+                'name' => true,
+                'value' => true,
+            ),
+            'button' => array(
+                'type' => true,
+                'class' => true,
+                'id' => true,
+            ),
+            'a' => array(
+                'class' => true,
+                'href' => true,
+            ),
+            'svg' => array(
+                'xmlns' => true,
+                'viewbox' => true,
+                'width' => true,
+                'height' => true,
+                'style' => true,
+            ),
+            'circle' => array(
+                'cx' => true,
+                'cy' => true,
+                'r' => true,
+                'fill' => true,
+            ),
+            'text' => array(
+                'x' => true,
+                'y' => true,
+                'font-family' => true,
+                'font-size' => true,
+                'font-weight' => true,
+                'fill' => true,
+                'text-anchor' => true,
+            ),
+        );
     }
 }
