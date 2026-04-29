@@ -306,8 +306,8 @@ class WC_Gateway_UnelmaPay extends WC_Payment_Gateway {
             wp_die('IPN Received', 'UnelmaPay IPN', array('response' => 200));
         }
 
+        // translators: %1$s is the transaction ID, %2$s is the amount.
         $order->add_order_note(sprintf(
-            // translators: %1$s is the transaction ID, %2$s is the amount.
             __('UnelmaPay payment completed. Transaction ID: %1$s, Amount: %2$s', 'unelmapay-payment-gateway'),
             $id_transfer,
             $total
